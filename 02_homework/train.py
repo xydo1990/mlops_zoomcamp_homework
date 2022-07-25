@@ -36,5 +36,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     mlflow.set_tracking_uri("http://localhost:5000")
+    zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
     mlflow.sklearn.autolog(disable=False)
     run(args.data_path)
