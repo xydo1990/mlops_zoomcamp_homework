@@ -86,6 +86,7 @@ def main(year, month):
     y_pred = lr.predict(X_val)
 
     print('predicted mean duration:', y_pred.mean())
+    print('predicted mean duration:', y_pred.sum())
 
     df_result = pd.DataFrame()
     df_result['ride_id'] = df['ride_id']
