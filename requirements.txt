@@ -1,9 +1,21 @@
+# for homeworks 1-6
+#matplotlib
+#numpy~=1.22.4
+#seaborn
+#scikit-learn==1.0.2
+#pandas~=1.4.2
+#setuptools~=62.3.2
+#mlflow~=1.26.1
+#hyperopt~=0.2.7
+#prefect~=2.0b5
+
+# for project
 matplotlib
-numpy~=1.22.4
-seaborn
-scikit-learn==1.0.2
-pandas~=1.4.2
-setuptools~=62.3.2
-mlflow~=1.26.1
-hyperopt~=0.2.7
-prefect~=2.0b5
+numpy
+pandas
+pandas
+torch==1.6.0
+torchvision==0.7.0
+fastai==2.0.9
+ipykernel
+
