@@ -25,9 +25,9 @@ pip install fastai --upgrade
 python -m ipykernel install --user --name=mlops_zoomcamp_homework
 
 # with pipenv locally
+# python 3.9
+# use ubuntu for plug and play setup
 $ pipenv shell
 $ jupyter notebook
 $ tensorboard --logdir=runs
 
-# with conda environment locally
-uses requirements.txt file for dependencies
