@@ -12,6 +12,9 @@ torchvision = "0.7.0"
 fastai = "2.0.9"
 jupyter = "*"
 ipykernel = "*"
+pyreadline = "*"
+tensorboard = "*"
+mlflow = "*"
 
 [dev-packages]
 pytest = "*"

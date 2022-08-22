@@ -13,5 +13,21 @@ https://www.kaggle.com/code/janweberml/lego-minifigures-classification-for-begin
 pip3 install pipenv
 git clone git@github.com:xydo1990/mlops_zoomcamp_homework.git
 cd mlops_zoomcamp_homework
-pipenv install
 
+# on aws
+sudp apt-get update
+pip install --upgrade pip
+python -m venv mlops_zoomcamp_homework  # create venv
+    source mlops_zoomcamp_homework/bin/activate  # for unix users
+    mlops_zoomcamp_homework/bin/activate  # for windows users
+pip install -r requirements.txt
+pip install fastai --upgrade
+python -m ipykernel install --user --name=mlops_zoomcamp_homework
+
+# with pipenv locally
+$ pipenv shell
+$ jupyter notebook
+$ tensorboard --logdir=runs
+
+# with conda environment locally
+uses requirements.txt file for dependencies

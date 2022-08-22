@@ -14,8 +14,13 @@ matplotlib
 numpy
 pandas
 pandas
-torch==1.6.0
-torchvision==0.7.0
-fastai==2.0.9
+torch
+torchvision
+fastai
+#fastai==2.0.9
 ipykernel
+setuptools~=62.3.2
+mlflow~=1.26.1
+hyperopt~=0.2.7
+#prefect~=2.0b5
 
