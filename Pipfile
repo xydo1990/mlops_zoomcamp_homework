@@ -15,6 +15,8 @@ ipykernel = "*"
 pyreadline = "*"
 tensorboard = "*"
 mlflow = "*"
+gunicorn = "*"
+boto3 = "*"
 
 [dev-packages]
 pytest = "*"
