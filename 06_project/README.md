@@ -23,6 +23,10 @@ python -m venv mlops_zoomcamp_homework  # create venv
 pip install -r requirements.txt
 pip install fastai --upgrade
 python -m ipykernel install --user --name=mlops_zoomcamp_homework
+git config --global user.name "YOUR_NAME"
+git config --global user.email "your_email"
+sudo apt install awscli
+aws configure  # enter your aws credentials
 
 # with pipenv locally
 # python 3.9
@@ -59,8 +63,10 @@ $ tensorboard --logdir=runs
 ### on computation instance
 1) add ssh config in ~/.ssh/config for AWS
 2) adapt TRACKING_SERVER_HOST in train_model.py with your remote AWS instance for tracking config (note: Here two different instances are used) 
+3) edit ~/.aws/config with your aws account settings
 3) in terminal go to 06_project folder
 4) run train_model.py
+
 
 # TODO upload new created image to Docker hub
 docker build -t mlops-zoomcamp-model:v1 .

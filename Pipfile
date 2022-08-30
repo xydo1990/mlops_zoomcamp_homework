@@ -9,17 +9,18 @@ pandas = "*"
 matplotlib = "*"
 torch = "1.6.0"
 torchvision = "0.7.0"
-fastai = "2.0.9"
+fastai = "*"
+mlflow = "*"
+gunicorn = "*"
+boto3 = "*"
+timm = "*"
+
+[dev-packages]
+pytest = "*"
 jupyter = "*"
 ipykernel = "*"
 pyreadline = "*"
 tensorboard = "*"
-mlflow = "*"
-gunicorn = "*"
-boto3 = "*"
-
-[dev-packages]
-pytest = "*"
 
 [requires]
 python_version = "3.9"
