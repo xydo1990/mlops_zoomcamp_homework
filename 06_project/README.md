@@ -53,6 +53,15 @@ $ tensorboard --logdir=runs
    4) mlflow-postgresDB endpoint mlflow-database.cjhtlhjvzym4.eu-west-2.rds.amazonaws.com
 5) access tracking server UI: INSTANCE_IP:5000
 
+## after stopping the instances
+### on mlflow instance
+1) on instance $  mlflow server -h 0.0.0.0 -p 5000 --backend-store-uri postgresql://mlflow:3bxprPbnQiwPB54yBe3b@mlflow-database.cjhtlhjvzym4.eu-west-2.rds.amazonaws.com:5432/mlflow_db --default-artifact-root s3://mlflow-artifacts-remote-xydo
+### on computation instance
+1) add ssh config in ~/.ssh/config for AWS
+2) adapt TRACKING_SERVER_HOST in train_model.py with your remote AWS instance for tracking config (note: Here two different instances are used) 
+3) in terminal go to 06_project folder
+4) run train_model.py
+
 # TODO upload new created image to Docker hub
 docker build -t mlops-zoomcamp-model:v1 .
 docker tag mlops-zoomcamp-model:v1 agrigorev/zoomcamp-model:mlops-3.9.7-slim

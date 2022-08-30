@@ -1,0 +1,9 @@
+*.pth
+/06_project/.ipynb_checkpoints
+/mlops_zoomcamp_homework/*
+/share/
+/tmp/
+/lib/
+/lib64/
+/include/
+/bin/

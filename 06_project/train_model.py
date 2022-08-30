@@ -7,7 +7,7 @@ import numpy as np
 import torch
 from fastai.vision.all import *
 import random
-from torchvision.models import resnet50, ResNet50_Weights
+# from torchvision.models import resnet50, ResNet50_Weights
 import mlflow
 import os
 
@@ -44,13 +44,13 @@ if __name__ == "__main__":
     seed_everything()
 
     os.environ["AWS_PROFILE"] = "default"  # fill in with your AWS profile.
-    TRACKING_SERVER_HOST = "ec2-18-132-211-111.eu-west-2.compute.amazonaws.com"  # fill in with the public DNS of the EC2 instance
+    TRACKING_SERVER_HOST = "ec2-13-40-105-80.eu-west-2.compute.amazonaws.com"  # fill in with the public DNS of the EC2 instance
     mlflow.set_tracking_uri(f"http://{TRACKING_SERVER_HOST}:5000")
     os.environ['TORCH_HOME'] = 'models\\resnet'  # setting the environment variable
     path = os.path.join(os.getcwd(), 'data')  # path to downloaded dataset
-    torch.set_num_threads(3)  # adapt to your hardware setup
+    torch.set_num_threads(8)  # adapt to your hardware setup
 
-    mlflow.set_experiment("project_resnet50_parallel")
+    mlflow.set_experiment("project_resnet50_v1")
 
     mlflow.fastai.autolog()
 
@@ -59,8 +59,9 @@ if __name__ == "__main__":
 
         params = {"lr1": 1e-3, "lr2": 1e-1, "random_seed": 0}
         mlflow.log_params(params)
-
-        learn = vision_learner(data, resnet50, metrics=[error_rate, accuracy], model_dir=Path(os.path.join(os.getcwd(),
+        #resnet_v2 = torchvision.models(weights=ResNet50_Weights.DEFAULT)
+        resnet_v2 = models.resnet50#(weights=ResNet50_Weights.IMAGENET1K_V2)
+        learn = vision_learner(data, resnet_v2, metrics=[error_rate, accuracy], model_dir=Path(os.path.join(os.getcwd(),
                                                                                                            "models",
                                                                                                            "resnet")),
                                path=Path(""
