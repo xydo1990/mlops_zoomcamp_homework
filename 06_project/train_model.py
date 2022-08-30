@@ -67,30 +67,31 @@ if __name__ == "__main__":
     torch.set_num_threads(8)  # adapt to your hardware setup
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    mlflow.set_experiment("project_resnet50_timm")
+    mlflow.set_experiment("project_resnet50_v1")
 
     mlflow.fastai.autolog()
 
     with mlflow.start_run():
         data = data_preprocess_handler(path)
 
-        params = {"lr1": 1e-3, "lr2": 1e-1, "random_seed": 0}
+        params = {"lr1": 1e-3, "lr2": 1e-1, "random_seed": 0, "model": "resnet50"}
         mlflow.log_params(params)
         #resnet_v2 = resnet50(weights=ResNet50_Weights.DEFAULT)
 
         #resnet_v2 = models.resnet50(weights=ResNet50_Weights.IMAGENET1K_V2)  # fastai resnet50 model
-        timm_model = timm.create_model('resnet50', pretrained = True, num_classes=data.c)
+        #timm_model = timm.create_model('resnet50', pretrained = True, num_classes=data.c)
         #model = model.to(device)
         #model.load_state_dict(model_zoo.load_url('https://download.pytorch.org/models/resnet50-19c8e357.pth')
-        body = create_timm_body('resnet50', pretrained=True)
-        nf = num_features_model(body)
-        head = create_head(nf, data.c, concat_pool=True)
-        timm_model = nn.Sequential(body, head)
-        learn = vision_learner(data, 'resnet50d', metrics=[error_rate, accuracy], model_dir=Path(os.path.join(os.getcwd(),
+        #body = create_timm_body('resnet50', pretrained=True)
+        #nf = num_features_model(body)
+        #head = create_head(nf, data.c, concat_pool=True)
+        #timm_model = nn.Sequential(body, head)
+        learn = vision_learner(data, 'resnet50', metrics=[error_rate, accuracy], model_dir=Path(os.path.join(os.getcwd(),
                                                                                                            "models",
                                                                                                            "resnet")),
                                path=Path(""
                                          "."))
+        # SaveModelCallback loads best model at the end of training
         learn.fit_one_cycle(100, slice(params["lr1"], params["lr2"]), cbs=[EarlyStoppingCallback(patience=2),
                                                                            SaveModelCallback(fname='model_best'),
                                                                            ReduceLROnPlateau()])
@@ -99,10 +100,10 @@ if __name__ == "__main__":
         y_hat = np.array([np.argmax(sample) for sample in preds])
         accuracy_best = accuracy_score(y.numpy(), y_hat)
         print(f"best accuracy {accuracy_best}")
+        mlflow.log_metric("accuracy_best", accuracy_best)
 
-
-        # load best model (best epoch)
-        learn_best = vision_learner(data, 'resnet50d', metrics=[error_rate, accuracy], model_dir = Path(os.path.join(os.getcwd(),
+        # manually load best model (if not trained)
+        learn_best = vision_learner(data, 'resnet50', metrics=[error_rate, accuracy], model_dir = Path(os.path.join(os.getcwd(),
                                                                                                    "models",
                                                                                                       "resnet")),
                        path =Path(""
@@ -116,4 +117,3 @@ if __name__ == "__main__":
         y_hat = np.array([np.argmax(sample) for sample in preds])
         accuracy_best = accuracy_score(y.numpy(), y_hat)
         print(f"best accuracy {accuracy_best}")
-        mlflow.log_metric("accuracy_best", accuracy_best)
