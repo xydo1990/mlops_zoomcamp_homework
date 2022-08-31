@@ -1,5 +1,9 @@
 *.pth
 /06_project/.ipynb_checkpoints
+/06_project/data/
+/06_project/model/
+/06_project/models*
+/06_project/outputs/
 /mlops_zoomcamp_homework/*
 /share/
 /tmp/

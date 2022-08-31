@@ -15,6 +15,7 @@ gunicorn = "*"
 boto3 = "*"
 timm = "*"
 pyarrow = "*"
+kaggle = "*"
 
 [dev-packages]
 pytest = "*"

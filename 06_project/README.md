@@ -5,6 +5,11 @@ https://medium.com/@EdwardCrowder/mlops-zoomcamp-2022-ff12dda6b5cc
 # dataset
 https://www.kaggle.com/datasets/ihelon/lego-minifigures-classification
 
+## get from kaggle
+1) follow https://www.kaggle.com/general/74235 to create kaggle API key file kaggle.json
+2) install with $ pipenv install kaggle
+3) in batch.py the data will be downloaded from kaggle
+
 # model training code
 https://www.kaggle.com/code/janweberml/lego-minifigures-classification-for-beginner/edit
 
