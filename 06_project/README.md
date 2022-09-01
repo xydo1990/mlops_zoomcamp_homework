@@ -88,6 +88,7 @@ $ tensorboard --logdir=runs
 3) edit ~/.aws/config with your aws account settings
 3) in terminal go to 06_project folder
 4) run train_model.py
+5) $ sudo install docker-compose
 
 
 ## TODO upload new created image to Docker hub

@@ -2,6 +2,7 @@
 # coding: utf-8
 
 ### goal: predict new batch of data and store predictions to file for analysis
+# loads model and data from file in docker-compose.yml
 import pandas as pd
 import numpy as np
 import os
@@ -9,7 +10,6 @@ import argparse
 from fastai.vision.all import *
 from sklearn.metrics import accuracy_score
 import mlflow
-import kaggle  # for dataset 
 
 
 def store_predictions(df, y_pred, output_file, y=None):
@@ -53,16 +53,8 @@ def preprocess_data(df, metadata):
     return df_lego
 
 
-def get_data(data_path, download=False):
+def get_data(data_path):
     """ gets data from path, loads it and returns data loader """
-    if download:
-        print("download data from kaggle, assuming that you have authentification key in correct ~/.kaggle/kaggle.json")
-        kaggle.api.authenticate()
-        kaggle.api.dataset_download_files('ihelon/lego-minifigures-classification',
-            path=os.path.dirname(data_path), unzip=True)
-    else:
-        print("use data copy from this repo")
-
     print(f"loading data from file path: {data_path}")
     df = pd.read_csv(data_path, encoding = "utf8")
     lego_metadata = pd.read_csv(os.path.join(os.path.dirname(data_path), 'metadata.csv'), index_col=0)
@@ -74,6 +66,7 @@ def get_learner(model_run, tracking_server):
     """ get model from mlflow model registry """
     print(f"loading model from file {model_run}")
     os.environ["AWS_PROFILE"] = "default"
+    
     mlflow.set_tracking_uri(f"http://{tracking_server}:5000")
     print(os.path.dirname(os.path.abspath(__file__)))
     learn = mlflow.pyfunc.load_model(model_run, dst_path=os.path.dirname(os.path.abspath(__file__)))
@@ -127,7 +120,7 @@ if __name__ == "__main__":
     parser.add_argument('--output_file', type=str, help='path of parquet file to store predictions', 
         default="/home/ubuntu/mlops_zoomcamp_homework/06_project/outputs/batch_predictions.parquet")
     parser.add_argument('--tracking_server', type=str, help='mlflow tracking server host', 
-        default="ec2-18-170-72-98.eu-west-2.compute.amazonaws.com")
+        default="mlflow_server")
     args = parser.parse_args()
 
     run(args)

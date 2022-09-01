@@ -1,0 +1,47 @@
+version: '3.3'
+
+services:
+  batch_prediction:
+    build: ./06_project/
+    volumes:
+      - ./06_project/data:/home/ubuntu/mlops_zoomcamp_homework/06_project/data
+    networks:
+      - backend
+    image: project_batch
+
+  web:
+    restart: always
+    build: ./mlflow
+    image: mlflow_server
+    container_name: mlflow_server
+    expose:
+      - "5000"
+    networks:
+      - frontend
+      - backend
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+    command: mlflow server --backend-store-uri postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DATABASE} --default-artifact-root s3://${MLFLOW_BUCKET_NAME} --host 0.0.0.0        
+
+  nginx:
+    restart: always
+    build: ./nginx
+    image: mlflow_nginx
+    container_name: mlflow_nginx
+    ports:
+      - "80:80"
+    networks:
+      - frontend
+    depends_on:
+      - web
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+
+# based on https://towardsdatascience.com/deploy-mlflow-with-docker-compose-8059f16b6039
+# but used postgresql db instead no aws as done in mlops zoomcamp course
