@@ -10,7 +10,7 @@ Label: Names of minifigures
 
 # get started
 0) installation, including aws cloud instance and s3 storage
-1) feeling for dataset -> jupyter notebook 
+1) feeling for dataset -> jupyter notebook
 2) train_model.py
 3) deployment of model in batch mode via: batch.py
 
@@ -31,7 +31,7 @@ https://www.kaggle.com/datasets/ihelon/lego-minifigures-classification
 https://www.kaggle.com/code/janweberml/lego-minifigures-classification-for-beginner/edit
 
 
-## prepare aws for code 
+## prepare aws for code
 pip3 install pipenv
 git clone git@github.com:xydo1990/mlops_zoomcamp_homework.git
 cd mlops_zoomcamp_homework
@@ -84,7 +84,7 @@ $ tensorboard --logdir=runs
 1) on instance $  mlflow server -h 0.0.0.0 -p 5000 --backend-store-uri postgresql://mlflow:3bxprPbnQiwPB54yBe3b@mlflow-database.cjhtlhjvzym4.eu-west-2.rds.amazonaws.com:5432/mlflow_db --default-artifact-root s3://mlflow-artifacts-remote-xydo
 #### on computation instance
 1) add ssh config in ~/.ssh/config for AWS
-2) adapt TRACKING_SERVER_HOST in train_model.py with your remote AWS instance for tracking config (note: Here two different instances are used) 
+2) adapt TRACKING_SERVER_HOST in train_model.py with your remote AWS instance for tracking config (note: Here two different instances are used)
 3) edit ~/.aws/config with your aws account settings
 3) in terminal go to 06_project folder
 4) run train_model.py
@@ -109,3 +109,6 @@ execute with
 2) $ chmod +x tests/integration_test.sh
 3) $ ./tests/integration_tests.sh
 
+# pre-commit hook
+1) install if in root folder of this repo
+2) $ pre-commit install
