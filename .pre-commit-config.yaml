@@ -28,7 +28,8 @@ repos:
       args: [
         "-rn", # Only display messages
         "-sn", # Don't display the score
-        "--recursive=y"
+        "--rcfile=pylintrc"
+        #"--recursive=y"
       ]
 - repo: local
   hooks:
