@@ -95,3 +95,17 @@ $ tensorboard --logdir=runs
 docker build -t mlops-zoomcamp-model:v1 .
 docker tag mlops-zoomcamp-model:v1 agrigorev/zoomcamp-model:mlops-3.9.7-slim
 docker push agrigorev/zoomcamp-model:mlops-3.9.7-slim
+
+
+# tests
+## unittests
+execute with
+1) go to 06_project folder
+2) $ python -m unittest tests/unittests.py
+
+## integration_tests
+execute with
+1) go to 06_project folder
+2) $ chmod +x tests/integration_test.sh
+3) $ ./tests/integration_tests.sh
+

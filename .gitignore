@@ -12,3 +12,4 @@
 /include/
 /bin/
 .env
+*.pyc

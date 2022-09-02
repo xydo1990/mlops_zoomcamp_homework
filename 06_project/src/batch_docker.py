@@ -24,9 +24,10 @@ def store_predictions(df, y_pred, output_file, y=None):
     if y is not None:
         df_result['label'] = y
 
-    dir_name = os.path.dirname(output_file)
-    if not os.path.exists(dir_name):
-        os.makedirs(dir_name)
+    # only needed if storing on local file system:
+    # dir_name = os.path.dirname(output_file)
+    #if not os.path.exists(dir_name):
+    #    os.makedirs(dir_name)
 
     print(f"storing predictions to file {output_file}")
     df_result.to_parquet(
@@ -64,10 +65,10 @@ def get_data(data_path):
 
 def get_learner(model_run, tracking_server):
     """ get model from mlflow model registry """
-    print(f"loading model from file {model_run}")
-    os.environ["AWS_PROFILE"] = "default"
+    print(f"loading model from file {model_run} and uri http://{tracking_server}:80" )
+    # os.environ["AWS_PROFILE"] = "default"
     
-    mlflow.set_tracking_uri(f"http://{tracking_server}:5000")
+    mlflow.set_tracking_uri(f"http://{tracking_server}:80")
     print(os.path.dirname(os.path.abspath(__file__)))
     learn = mlflow.pyfunc.load_model(model_run, dst_path=os.path.dirname(os.path.abspath(__file__)))
     return learn
@@ -120,8 +121,12 @@ if __name__ == "__main__":
     parser.add_argument('--output_file', type=str, help='path of parquet file to store predictions', 
         default="/home/ubuntu/mlops_zoomcamp_homework/06_project/outputs/batch_predictions.parquet")
     parser.add_argument('--tracking_server', type=str, help='mlflow tracking server host', 
-        default="mlflow_server")
+        default="localhost")
     args = parser.parse_args()
+
+    # HOTFIX
+    args.tracking_server = os.getenv("TRACKING_SERVER_HOST")
+    args.output_file = "s3://" + os.getenv("MLFLOW_BUCKET_NAME") + "/batch_prediction.parquet"
 
     run(args)
 

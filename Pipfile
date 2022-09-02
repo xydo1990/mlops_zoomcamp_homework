@@ -16,6 +16,9 @@ boto3 = "*"
 timm = "*"
 pyarrow = "*"
 kaggle = "*"
+fsspec = "*"
+s3fs = "*"
+pytest = "*"
 
 [dev-packages]
 pytest = "*"
