@@ -91,12 +91,6 @@ $ tensorboard --logdir=runs
 5) $ sudo install docker-compose
 
 
-## TODO upload new created image to Docker hub
-docker build -t mlops-zoomcamp-model:v1 .
-docker tag mlops-zoomcamp-model:v1 agrigorev/zoomcamp-model:mlops-3.9.7-slim
-docker push agrigorev/zoomcamp-model:mlops-3.9.7-slim
-
-
 # tests
 ## unittests
 execute with
@@ -109,6 +103,15 @@ execute with
 2) $ chmod +x tests/integration_test.sh
 3) $ ./tests/integration_tests.sh
 
-# pre-commit hook
-1) install if in root folder of this repo
-2) $ pre-commit install
+# makefile, pre-commit hooks
+requirements
+1) sudo apt install make
+2) sudo apt install make-guile
+3) go to 06_project folder
+4) run setup (as well for pre-commit hooks) with $ make setup
+
+
+# TODOs
+1) model orchestration
+2) monitoring
+2) CICD (later)
