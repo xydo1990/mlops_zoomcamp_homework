@@ -54,7 +54,7 @@ jobs:
       - name: Integration Test
         working-directory: "06_project/tests"
         run: |
-          bash integration_test_cicd.sh
+          . integration_test_cicd.sh
 
   tf-plan:
     runs-on: ubuntu-latest
