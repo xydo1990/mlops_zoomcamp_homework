@@ -6,8 +6,6 @@ on:
     paths:
       - '06_project/src/**'
   push:
-    branches:
-      - '*'
     paths:
       - '06_project/src/**'
 
