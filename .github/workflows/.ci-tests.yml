@@ -5,6 +5,11 @@ on:
       - 'develop'
     paths:
       - '06_project/src/**'
+  push:
+    branches:
+      - '*'
+    paths:
+      - '06_project/src/**'
 
 env:
   AWS_DEFAULT_REGION: 'eu-west-2'
