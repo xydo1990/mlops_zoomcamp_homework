@@ -36,7 +36,7 @@ jobs:
 
       - name: Lint
         working-directory: "06_project/src"
-        run: pipenv run pylint --rcfile="../.pylintrc" .
+        run: pipenv run pylint --rcfile=".pylintrc" .
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
