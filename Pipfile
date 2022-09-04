@@ -19,6 +19,7 @@ kaggle = "*"
 fsspec = "*"
 s3fs = "*"
 pytest = "*"
+prefect = "==2.0b5"
 
 [dev-packages]
 pytest = "*"
