@@ -52,9 +52,9 @@ jobs:
           aws-region: ${{ env.AWS_DEFAULT_REGION }}
 
       - name: Integration Test
-        working-directory: "06_project/tests"
+        working-directory: "06_project"
         run: |
-          . integration_test_cicd.sh
+          . tests/integration_test_cicd.sh
 
   tf-plan:
     runs-on: ubuntu-latest
