@@ -27,6 +27,7 @@ ipykernel = "*"
 pyreadline = "*"
 tensorboard = "*"
 pre-commit = "*"
+pylint = "*"
 
 [requires]
 python_version = "3.9"
