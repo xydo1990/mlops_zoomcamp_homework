@@ -31,12 +31,12 @@ jobs:
         run: pip install pipenv && pipenv install --dev
 
       - name: Run Unit tests
-        working-directory: "06_project/src"
-        run: pipenv run pytest tests/unittests.py
+        working-directory: "06_project/tests"
+        run: pipenv run pytest unittests.py
 
       - name: Lint
         working-directory: "06_project/src"
-        run: pipenv run pylint --recursive=y .
+        run: pipenv run pylint --rcfile="../.pylintrc" .
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
