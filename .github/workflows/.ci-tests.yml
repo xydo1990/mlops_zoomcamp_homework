@@ -15,6 +15,12 @@ env:
   AWS_DEFAULT_REGION: 'eu-west-2'
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  TRACKING_SERVER_HOST: ${{ secrets.TRACKING_SERVER_HOST }}
+  MLFLOW_BUCKET_NAME: ${{ secrets.MLFLOW_BUCKET_NAME }}
+  POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+  POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+  POSTGRES_DATABASE: ${{ secrets.POSTGRES_DATABASE }}
 
 jobs:
   test:
@@ -48,7 +54,7 @@ jobs:
       - name: Integration Test
         working-directory: '06_project/tests'
         run: |
-          . integration_test.sh
+          . integration_test_cicd.sh
 
   tf-plan:
     runs-on: ubuntu-latest
