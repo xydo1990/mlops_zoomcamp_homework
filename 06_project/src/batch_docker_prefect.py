@@ -2,12 +2,13 @@
 # coding: utf-8
 
 import argparse
-import logging
 import os
 
 import numpy as np
 import pandas as pd
 from fastai.vision.all import *
+from prefect import flow, get_run_logger, task
+from prefect.task_runners import SequentialTaskRunner
 from sklearn.metrics import accuracy_score
 
 import mlflow
@@ -16,12 +17,14 @@ import mlflow
 # loads model and data from file in docker-compose.yml
 
 
+@task
 def store_predictions(df, y_pred, output_file, y=None):
     """
     stores predictions to output_file in parquet format
 
     stores labels as well if present
     """
+    logger = get_run_logger()
     df_result = pd.DataFrame()
     df_result["fname"] = df["fname"]
     df_result["y_pred"] = y_pred
@@ -33,11 +36,12 @@ def store_predictions(df, y_pred, output_file, y=None):
     # if not os.path.exists(dir_name):
     #    os.makedirs(dir_name)
 
-    logging.info("storing predictions to file %s", output_file)
+    logger.info(f"storing predictions to file {output_file}")
     df_result.to_parquet(output_file, engine="pyarrow", compression=None, index=False)
-    logging.info("size of saved data: %s", os.path.getsize(output_file) / 1000000)
+    logger.info(f"size of saved data: {os.path.getsize(output_file) / 1000000}")
 
 
+@task
 def preprocess_data(df, metadata):
     """
     add label column and change path to fname column
@@ -54,9 +58,11 @@ def preprocess_data(df, metadata):
     return df_lego
 
 
+@task
 def get_data(data_path):
     """gets data from path, loads it and returns data loader"""
-    logging.info("loading data from file path %s", data_path)
+    logger = get_run_logger()
+    logger.info(f"loading data from file path: {data_path}")
     df = pd.read_csv(data_path, encoding="utf8")
     lego_metadata = pd.read_csv(
         os.path.join(os.path.dirname(data_path), "metadata.csv"), index_col=0
@@ -65,23 +71,24 @@ def get_data(data_path):
     return df_lego
 
 
+@task
 def get_learner(model_run, tracking_server):
     """get model from mlflow model registry"""
-    logging.info(
-        "loading model from file {} and uri http://{}:80".format(
-            model_run, tracking_server
-        )
+    logger = get_run_logger()
+    logger.info(
+        f"loading model from file {model_run} and uri http://{tracking_server}:80"
     )
     # os.environ["AWS_PROFILE"] = "default"
 
     mlflow.set_tracking_uri(f"http://{tracking_server}:80")
-    logging.info(os.path.dirname(os.path.abspath(__file__)))
+    logger.info(os.path.dirname(os.path.abspath(__file__)))
     learn = mlflow.pyfunc.load_model(
         model_run, dst_path=os.path.dirname(os.path.abspath(__file__))
     )
     return learn
 
 
+@task
 def make_predictions(learn, df):
     """make predictions with data loader using learner"""
     # test_dl = learn.dls.test_dl(test_files)
@@ -91,28 +98,32 @@ def make_predictions(learn, df):
     return np.array(y_pred), np.array(df["class_id"])
 
 
+@task
 def calculate_metrics(y_pred, y):
     """
     calculate different metrics based on predictions
 
     metrics are not stored atm
     """
+    logger = get_run_logger()
     accuracy = accuracy_score(y, y_pred)
-    logging.info("accuracy %s", accuracy)
+    logger.info(f"accuracy {accuracy}")
 
 
+@flow(task_runner=SequentialTaskRunner())
 def run(data_path, model_run, tracking_server, output_file):
     """handles run of loading model and data, make predictions and store result"""
-    logging.info("get data")
+    logger = get_run_logger()
+    logger.info("get data")
     df_lego = get_data(data_path)
-    logging.info("get model")
+    logger.info("get model")
     learner = get_learner(model_run, tracking_server)
-    logging.info("make predictions")
+    logger.info("make predictions")
     y_pred, y = make_predictions(learner, df_lego)
-    logging.info("calculate metrics")
+    logger.info("calculate metrics")
     if y is not None:
         calculate_metrics(y_pred, y)
-    logging.info("store predictions")
+    logger.info("store predictions")
     store_predictions(df_lego, y_pred, output_file, y)
 
 
