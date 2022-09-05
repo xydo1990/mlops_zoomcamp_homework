@@ -41,7 +41,6 @@ def store_predictions(df, y_pred, output_file, y=None):
     logger.info(f"size of saved data: {os.path.getsize(output_file) / 1000000}")
 
 
-@task
 def preprocess_data(df, metadata):
     """
     add label column and change path to fname column
@@ -76,11 +75,11 @@ def get_learner(model_run, tracking_server):
     """get model from mlflow model registry"""
     logger = get_run_logger()
     logger.info(
-        f"loading model from file {model_run} and uri http://{tracking_server}:80"
+        f"loading model from file {model_run} and uri http://{tracking_server}:5000"
     )
     # os.environ["AWS_PROFILE"] = "default"
 
-    mlflow.set_tracking_uri(f"http://{tracking_server}:80")
+    mlflow.set_tracking_uri(f"http://{tracking_server}:5000")
     logger.info(os.path.dirname(os.path.abspath(__file__)))
     learn = mlflow.pyfunc.load_model(
         model_run, dst_path=os.path.dirname(os.path.abspath(__file__))

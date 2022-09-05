@@ -110,8 +110,22 @@ requirements
 3) go to 06_project folder
 4) run setup (as well for pre-commit hooks) with $ make setup
 
+# Prefect setup
+on remote aws
+1) prefect config set PREFECT_ORION_UI_API_URL="https://<external_IP>:4200/api"
+2) prefect orion start --host 0.0.0.0
+3) prefect storage create
+4) select S3 AWS
+
+on local
+1) prefect config set PREFECT_ORION_UI_API_URL="https://<external_IP>:4200/api"
+2) in project_06 folder run $ python src/batch_prefect_flow.py
+3) $ prefect deployment create src/batch_prefect_deployment.py
+
+on prefect UI
+1) create Work Queue with deployment
+
 
 # TODOs
-1) model orchestration
-2) monitoring
+1) monitoring
 2) CICD (later)

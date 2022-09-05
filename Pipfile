@@ -20,6 +20,7 @@ fsspec = "*"
 s3fs = "*"
 pytest = "*"
 prefect = "==2.0b5"
+psycopg2-binary = "*"
 
 [dev-packages]
 pytest = "*"
