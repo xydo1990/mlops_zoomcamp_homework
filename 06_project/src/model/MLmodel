@@ -1,0 +1,15 @@
+artifact_path: model
+flavors:
+  fastai:
+    code: null
+    data: model.fastai
+    fastai_version: 2.7.9
+  python_function:
+    data: model.fastai
+    env: conda.yaml
+    loader_module: mlflow.fastai
+    python_version: 3.9.12
+mlflow_version: 1.28.0
+model_uuid: 8a7067a4ea2b43b78e6876b66ed0f1f3
+run_id: 5e8554e66b654f54ae52a7aeb9ff8b0d
+utc_time_created: '2022-08-30 18:10:56.558077'
