@@ -30,8 +30,9 @@ services:
     env_file:
       - .env
     environment:
-      EVIDENTLY_SERVICE: "http://evidently_service.:8085"
-      MONGODB_ADDRESS: "mongodb://mongo.:27017/"
+      TRACKING_SERVER_HOST: "mlflow_nginx"
+      EVIDENTLY_SERVICE_ADDRESS: "http://evidently_service:8085"
+      MONGODB_ADDRESS: "mongodb://mongo:27017/"
     ports:
       - "9696:9696"
     networks:

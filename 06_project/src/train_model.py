@@ -1,3 +1,4 @@
+import argparse
 import os
 import random
 
@@ -10,8 +11,6 @@ from fastai.vision.learner import _update_first_layer
 from sklearn.metrics import accuracy_score
 
 import mlflow
-
-# separately because of multiprocessing
 
 
 def seed_everything(seed=0):
@@ -66,11 +65,22 @@ def create_timm_body(arch: str, pretrained=True, cut=None, n_in=3):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="training an image classifier and tracking experiment with mlflow"
+    )
+    parser.add_argument(
+        "--tracking_server",
+        type=str,
+        help="mlflow tracking server host",
+        default="localhost",
+    )
+    args = parser.parse_args()
+
     seed_everything()
 
     os.environ["AWS_PROFILE"] = "default"  # fill in with your AWS profile.
     # fill in with the public DNS of the EC2 instance
-    TRACKING_SERVER_HOST = "ec2-13-40-105-80.eu-west-2.compute.amazonaws.com"
+    TRACKING_SERVER_HOST = os.getenv("TRACKING_SERVER_HOST", args.tracking_server)
     mlflow.set_tracking_uri(f"http://{TRACKING_SERVER_HOST}:5000")
     os.environ["TORCH_HOME"] = "models\\resnet"  # setting the environment variable
     path = os.path.join(
@@ -88,18 +98,7 @@ if __name__ == "__main__":
 
         params = {"lr1": 1e-3, "lr2": 1e-1, "random_seed": 0, "model": "resnet50"}
         mlflow.log_params(params)
-        # resnet_v2 = resnet50(weights=ResNet50_Weights.DEFAULT)
 
-        # resnet_v2 = models.resnet50(weights=ResNet50_Weights.IMAGENET1K_V2)
-        # # fastai resnet50 model
-        # timm_model = timm.create_model('resnet50', pretrained = True, num_classes=data.c)
-        # model = model.to(device)
-        # model.load_state_dict(
-        #     model_zoo.load_url('https://download.pytorch.org/models/resnet50-19c8e357.pth')
-        # body = create_timm_body('resnet50', pretrained=True)
-        # nf = num_features_model(body)
-        # head = create_head(nf, data.c, concat_pool=True)
-        # timm_model = nn.Sequential(body, head)
         learn = vision_learner(
             data,
             "resnet50",

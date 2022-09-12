@@ -1,14 +1,13 @@
 *.pth
 /05*
 /06_project/.ipynb_checkpoints
-#/06_project/data/
+/06_project/data/
 /06_project/model/MLmodel
 /06_project/model/model.fastai*
 /06_project/src/model/model.fastai*
 /06_project/model*
 /06_project/outputs/
 06_project/src/prefect_monitoring_solution.py
-/data/*
 /mlops_zoomcamp_homework/*
 /share/
 /tmp/
