@@ -126,6 +126,27 @@ on prefect UI
 1) create Work Queue with deployment
 
 
+
+# streaming
+##  without docker
+1) start docker-compose file in repo root directory with $ docker-compose up -d
+    * mlflow registry
+    * mongo DB
+    * evidently service
+2) $ docker stop prediction_service
+3) use localhost in following variables:
+    MONGODB_ADDRESS="mongodb://localhost:27017"
+    EVIDENTLY_SERVICE_ADDRESS = os.getenv(
+    "EVIDENTLY_SERVICE", "http://localhost:8085"
+4) go to prediction_service folder and run $ python streaming_send_data.py
+
+## with docker env
+1) start docker-compose file in repo root directory with $ docker-compose up -d
+2) TODO
+3) TODO
+4) go to prediction_service folder and run $ python streaming_send_data.py
+
+
 # TODOs
 1) monitoring
 2) CICD (later)

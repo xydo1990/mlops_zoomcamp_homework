@@ -53,6 +53,7 @@ def send_data(data_path):
 
     for index, row in df.iterrows():
         print(index)
+        print(row.to_json(orient="columns"))
         print(json.dumps(row.to_json(orient="columns")))
         print(
             "address "

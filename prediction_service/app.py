@@ -2,24 +2,24 @@
 
 import base64
 import io
-import json
 import logging
+import logging.handlers
 import os
 from logging.config import dictConfig
 
 import numpy as np
 import pandas as pd
 import requests
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 from PIL import Image
 from pymongo import MongoClient
 
 import mlflow
 
-MONGODB_ADDRESS = os.getenv("MONGODB_ADDRESS", "mongodb://mongo:27017")
+MONGODB_ADDRESS = os.getenv("MONGODB_ADDRESS", "mongodb://localhost:27017")
 # TODO port change, mlflow uses same 5000
 EVIDENTLY_SERVICE_ADDRESS = os.getenv(
-    "EVIDENTLY_SERVICE", "http://evidently_service:8085"
+    "EVIDENTLY_SERVICE_ADDRESS", "http://localhost:8085"
 )
 
 mongo_client = MongoClient(MONGODB_ADDRESS)
@@ -40,13 +40,15 @@ dictConfig(
         "root": {"level": "DEBUG", "handlers": ["wsgi"]},
     }
 )
-logging.basicConfig(filename="record.log", level=logging.DEBUG)
-# handler = logging.handlers.SysLogHandler(address = '/dev/log')
-# handler.setFormatter(logging.Formatter('flask [%(levelname)s] %(message)s'))
 
-# logger = logging.getLogger("streaming_monitoring")
-app = Flask("minifigure_prediction_streaming")
-# app.logger.addHandler(handler)
+handler = logging.handlers.SysLogHandler(address="/dev/log")
+handler.setFormatter(logging.Formatter("flask [%(levelname)s] %(message)s"))
+
+app = Flask(__name__)
+app.logger.addHandler(handler)
+
+# logging.basicConfig(filename="record.log", level=logging.DEBUG)
+# app = Flask("minifigure_prediction_streaming")
 
 
 def save_to_db(record, prediction):
@@ -109,6 +111,14 @@ learn = get_learner(
 )
 
 
+@app.before_first_request
+def setup_logging():
+    if not app.debug:
+        # In production mode, add log handler to sys.stderr.
+        app.logger.addHandler(logging.StreamHandler())
+        app.logger.setLevel(logging.INFO)
+
+
 @app.route("/", methods=["GET"])
 def get_info():
     """Function to provide info about the app"""
@@ -132,13 +142,11 @@ def get_info():
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    app.logger.debug(request)
+    """
     print(request.get_json())
     request_dict = json.loads(request.get_json())
-    # request_dict = request.get_json()
     del request_dict["index"]
     df_row = pd.read_json(json.dumps(request_dict), typ="series")
-    # df_row['fname'] = df_row.path
     app.logger.info(df_row.head())
     # return features
     y_pred, _ = make_single_prediction(df_row["path"])
@@ -146,18 +154,14 @@ def predict():
     return_dict = {"y_pred": y_pred, "labels": df_row["class_id"]}
     app.logger.info(return_dict)
 
-    # image = convert_request_to_image_format(request_dict["image_utf8_base64"])
-    # y_pred, y = make_single_prediction_array(image)
-    # print("Finished backend prediction")
-    # return_dict = {'minifigure class pred': y_pred, 'target_class': request_dict["label"]}
-
-    # save_to_db(request_dict, y_pred)
-    # logging.info("save to db")
-    # save_to_evidently_service(request_dict, y_pred)
-    # logging.info("save to evidently")
-
+    save_to_db(request_dict, y_pred)
+    logging.info("save to db")
+    save_to_evidently_service(request_dict, y_pred)
+    logging.info("save to evidently")
+    """
+    return_dict = {"y_pred": 9, "labels": 10}
     return jsonify(return_dict)
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=9696)
+    app.run(debug=False, host="0.0.0.0", port=9696)
