@@ -32,9 +32,6 @@ def preprocess_data(df, metadata):
     )
     # HOTFIX why needed to remove path containing my user name?
     df_lego["path"] = df_lego["fname"]
-    # df_lego = df_lego[['path', 'minifigure_name', 'fname', 'labels']]
-    df_lego["minifigure_name"] = df_lego["path"]
-    df_lego["labels"] = df_lego["path"]
     return df_lego
 
 
@@ -55,12 +52,19 @@ def send_data(data_path):
     df = df.reset_index()  # make sure indexes pair with number of rows
 
     for index, row in df.iterrows():
-        print(f"index {index}")
-        print(f"request: {row.to_json(orient='columns')}")
+        print(index)
+        print(json.dumps(row.to_json(orient="columns")))
+        print(
+            "address "
+            + "http://"
+            + os.getenv("FLASK_ADDRESS", "127.0.0.1")
+            + ":9696/predict"
+        )
         resp = requests.post(
-            "http://127.0.0.1:9696/predict",
+            "http://" + os.getenv("FLASK_ADDRESS", "127.0.0.1") + ":9696/predict",
             headers={"Content-Type": "application/json"},
-            data=json.dumps(row.to_json(orient="columns"), timeout=10),
+            data=json.dumps(row.to_json(orient="columns")),
+            timeout=10,
         ).json()
         # with open(row["path"], "rb") as image_file:
         #    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')

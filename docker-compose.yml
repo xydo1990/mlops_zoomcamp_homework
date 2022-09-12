@@ -19,6 +19,25 @@ services:
       - web
       - nginx
 
+  prediction_service:
+    build: ./prediction_service/
+    image: prediction_service
+    container_name: prediction_service
+    depends_on:
+      - evidently_service
+      - mongo
+      - web
+    env_file:
+      - .env
+    environment:
+      EVIDENTLY_SERVICE: "http://evidently_service.:8085"
+      MONGODB_ADDRESS: "mongodb://mongo.:27017/"
+    ports:
+      - "9696:9696"
+    networks:
+      - backend
+      - frontend
+
   web:
     restart: always
     build: ./mlflow
@@ -33,8 +52,8 @@ services:
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
-    command: mlflow server --backend-store-uri postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DATABASE} --default-artifact-root s3://${MLFLOW_BUCKET_NAME} --host 0.0.0.0 -p 5000        
-    
+    command: mlflow server --backend-store-uri postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DATABASE} --default-artifact-root s3://${MLFLOW_BUCKET_NAME} --host 0.0.0.0 -p 5000
+
   nginx:
     restart: always
     build: ./nginx
@@ -47,11 +66,77 @@ services:
     depends_on:
       - web
 
+  mongo:
+    image: mongo
+    container_name: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - backend
+      - frontend
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./05-monitoring/evidently_service/config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    ports:
+      - "9091:9090"
+    networks:
+      - backend
+    restart: always
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    user: "472"
+    depends_on:
+      - prometheus
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./05-monitoring/evidently_service/config/grafana_datasources.yaml:/etc/grafana/provisioning/datasources/datasource.yaml:ro
+      - ./05-monitoring/evidently_service/config/grafana_dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro
+      - ./05-monitoring/evidently_service/dashboards:/opt/grafana/dashboards
+      - grafana_data:/var/lib/grafana
+    networks:
+      - backend
+      - frontend
+    restart: always
+
+  evidently_service:
+    build:
+      context: ./05-monitoring/evidently_service
+      dockerfile: Dockerfile
+    image: evidently_service
+    container_name: evidently_service
+    depends_on:
+      - grafana
+    volumes:
+      - ./05-monitoring/evidently_service/datasets:/app/datasets
+      - ./05-monitoring/evidently_service/config.yaml:/app/config.yaml
+    ports:
+      - "8085:8085"
+    networks:
+      - backend
+      - frontend
+
 networks:
   frontend:
     driver: bridge
   backend:
     driver: bridge
+
+volumes:
+  grafana_data: {}
+  prometheus_data: {}
+  mongo_data: {}
 
 # based on https://towardsdatascience.com/deploy-mlflow-with-docker-compose-8059f16b6039
 # but used postgresql db instead no aws as done in mlops zoomcamp course
