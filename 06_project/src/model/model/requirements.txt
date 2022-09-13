@@ -1,0 +1,6 @@
+mlflow
+cffi==1.15.1
+dataclasses==0.6
+fastai==2.7.9
+google-auth==2.11.0
+timm==0.6.7

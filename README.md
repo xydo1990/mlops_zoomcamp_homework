@@ -4,9 +4,11 @@ Homeworks and project of mlops_zoomcamp https://github.com/DataTalksClub/mlops-z
 The following parts are referring to the project of the course. Find in in folder [06_project](06_project).
 
 # problem description
-Your customer is a company which sells minifigures and experiences a high number of returns. Returned minifigures might not have an undamaged packaging. Therefore, all minifigures are firstly put in one large box. Your task is now to classify these minifigures to enable the customer to pack the minifigures in the correct new packaging.
+Your customer is a company which sells minifigures and experiences a high number of returns. Returned minifigures might have an undamaged packaging. Therefore, all minifigures are firstly put in one large box. Your task is now to classify these minifigures to enable the customer to pack the minifigures in the correct new packaging.
 
 Training data: https://www.kaggle.com/datasets/ihelon/lego-minifigures-classification
+
+![show_batch](./images/show_batch.png)
 
 Label: Names of minifigures
 
@@ -15,23 +17,26 @@ Label: Names of minifigures
 
 # get started
 1) get develop environment
-    1) ```$ git clone git@github.com:xydo1990/mlops_zoomcamp_homework.git```
-    2) ```$ cd mlops_zoomcamp_homework```
-    3) ```$ pipenv install```
-    4) ```$ pipenv shell```
+    1) clone repo and go to folder
+    2) ```$ pipenv install```
+    3) ```$ pipenv shell```
 1) get data from kaggle
     * download with script
         1) follow https://www.kaggle.com/general/74235 to create kaggle API key file kaggle.json
-        2) use [06_project/src/get_data.py](06_project/src/get_data.py)
+        2) use script ```$ python 06_project/src/get_data.py```
     * download manually at https://www.kaggle.com/datasets/ihelon/lego-minifigures-classification and copy to 06_project/data
 2) feeling for dataset: [06_project/src/test.ipynb](06_project/src/test.ipynb)
 3) start mlflow tracking server
-    * locally with ```$ mlflow server --backend-store-uri sqlite:///backend.db --default-artifact-root ./ --host YOUR_IP```
+    * locally with ```$ mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./ --host localhost```
     * (preferred) remotely: follow steps in mlflow tracking server section
 3) train the model: [06_project/src/train_model.py](06_project/src/train_model.py)
-    1) adapt TRACKING_SERVER_HOST in train_model.py with your remote AWS instance for tracking config (note: Here two different instances are used)
-    2) edit ~/.aws/config with your aws account settings
-    4) run training with: ```$ 06_project/src/train_model.py --tracking_server=YOUR_SERVER```
+    * locally with : ```$ python 06_project/src/train_model.py``
+    * (preferred) remotely:
+        1) adapt TRACKING_SERVER_HOST in train_model.py with your remote AWS instance for tracking config (note: Here two different instances are used)
+        2) edit ~/.aws/config with your aws account settings
+        3) run with: ```$ python 06_project/src/train_model.py --tracking_server=YOUR_SERVER```
+4) OR: use pretrained model from mlflow registry
+    1) use run_id: 5c3eca95a08f47a48066177e853ede80 from local mlflow registry
 5) deployment streaming and batch mode with docker containers
     1) copy [sample.env](sample.env) to .env with ```$ cp sample.env .env```
     2) adapt values according to your setup in .env ```$ nano .env```
@@ -55,7 +60,7 @@ Label: Names of minifigures
 
 
 # installation aws
-0) installation, including aws cloud instance and s3 storage
+0) installation, including aws cloud instance and s3 storage (using python 3.9)
     1) ```$ sudp apt-get update```
     2) ```$ pip install --upgrade pip```
     3) ```$ pip3 install pipenv```

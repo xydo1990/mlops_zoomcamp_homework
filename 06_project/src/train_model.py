@@ -74,6 +74,18 @@ if __name__ == "__main__":
         help="mlflow tracking server host",
         default="localhost",
     )
+    parser.add_argument(
+        "--n_cores",
+        type=int,
+        help="number of cpu cores",
+        default=1,
+    )
+    parser.add_argument(
+        "--data_path",
+        type=str,
+        help="path to minifigure data folder relative to this file",
+        default="../data",
+    )
     args = parser.parse_args()
 
     seed_everything()
@@ -83,10 +95,11 @@ if __name__ == "__main__":
     TRACKING_SERVER_HOST = os.getenv("TRACKING_SERVER_HOST", args.tracking_server)
     mlflow.set_tracking_uri(f"http://{TRACKING_SERVER_HOST}:5000")
     os.environ["TORCH_HOME"] = "models\\resnet"  # setting the environment variable
+    # path to downloaded dataset
     path = os.path.join(
-        os.path.dirname(os.path.realpath(__file__)), "data"
-    )  # path to downloaded dataset
-    torch.set_num_threads(8)  # adapt to your hardware setup
+        os.path.dirname(os.path.realpath(__file__)), args.data_path
+    )  
+    torch.set_num_threads(args.n_cores)  # adapt to your hardware setup
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     mlflow.set_experiment("project_resnet50_v1")

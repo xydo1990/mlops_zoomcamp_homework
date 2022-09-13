@@ -31,6 +31,7 @@ pyyaml = "~=5.4.1"
 tqdm = "*"
 pymongo = "*"
 evidently = "*"
+ipykernel = "*"
 
 [dev-packages]
 pytest = "*"
