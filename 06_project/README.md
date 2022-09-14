@@ -129,16 +129,18 @@ on prefect UI
 
 # streaming
 ##  without docker
-1) start docker-compose file in repo root directory with $ docker-compose up -d
+1) start docker-compose file in repo root directory with ```$ docker-compose up -d --build```
     * mlflow registry
     * mongo DB
     * evidently service
-2) $ docker stop prediction_service
+2) ```$ docker stop prediction_service```
+3) activate project python environment ```$ pipenv shell```
+3) ```$ python prediction_service/app.py```
 3) use localhost in following variables:
     MONGODB_ADDRESS="mongodb://localhost:27017"
     EVIDENTLY_SERVICE_ADDRESS = os.getenv(
     "EVIDENTLY_SERVICE", "http://localhost:8085"
-4) go to prediction_service folder and run $ python streaming_send_data.py
+4) go to prediction_service folder, adapt the data_path (to your test.csv file) in the following command and run it ```$ python prediction_service/streaming_send_data.py --data_path=REPO_FOLDER/06_project/data/test.csv```
 
 ## with docker env
 1) start docker-compose file in repo root directory with $ docker-compose up -d

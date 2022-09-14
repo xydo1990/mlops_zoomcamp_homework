@@ -36,7 +36,7 @@ Label: Names of minifigures
         2) edit ~/.aws/config with your aws account settings
         3) run with: ```$ python 06_project/src/train_model.py --tracking_server=YOUR_SERVER```
 4) OR: use pretrained model from mlflow registry
-    1) use run_id: 5c3eca95a08f47a48066177e853ede80 from local mlflow registry
+    1) use run_id: "5c3eca95a08f47a48066177e853ede80" from local mlflow registry
 5) deployment streaming and batch mode with docker containers
     1) copy [sample.env](sample.env) to .env with ```$ cp sample.env .env```
     2) adapt values according to your setup in .env ```$ nano .env```
@@ -145,22 +145,26 @@ on prefect UI
 
 
 # streaming
-##  without docker
-1) start docker-compose file in repo root directory with $ docker-compose up -d
+##  partly without docker, AWS usage 
+requirement: setup of AWS as done in linked mlflow course
+1) start docker-compose file in repo root directory with ```$ docker-compose up -d --build```
     * mlflow registry
     * mongo DB
     * evidently service
 2) ```$ docker stop prediction_service```
-3) use localhost in following variables:
+4) ```$ python prediction_service/app.py```
+5) (use localhost in following variables:
     MONGODB_ADDRESS="mongodb://localhost:27017"
     EVIDENTLY_SERVICE_ADDRESS = os.getenv(
-    "EVIDENTLY_SERVICE", "http://localhost:8085"
-4) go to prediction_service folder and run ```$ python streaming_send_data.py```
+    "EVIDENTLY_SERVICE", "http://localhost:8085")
+6) go to prediction_service folder and run ```$ python prediction_service/streaming_send_data.py```
+7) resulting in a terminal output like:
+![images/streaming_output.png](images/streaming_output.png)
 
 ## with docker env
-1) start docker-compose file in repo root directory with ```$ docker-compose up -d```
+1) start docker-compose file in repo root directory with ```$ docker-compose up -d --build```
 2) TODO
-4) go to prediction_service folder and run ```$ python streaming_send_data.py```
+4) go to prediction_service folder and run ```$ python prediction_service/streaming_send_data.py```
 
 
 # credits

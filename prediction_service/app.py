@@ -6,18 +6,18 @@ import logging
 import logging.handlers
 import os
 from logging.config import dictConfig
+import json
 
 import numpy as np
 import pandas as pd
 import requests
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from PIL import Image
 from pymongo import MongoClient
 
 import mlflow
 
 MONGODB_ADDRESS = os.getenv("MONGODB_ADDRESS", "mongodb://localhost:27017")
-# TODO port change, mlflow uses same 5000
 EVIDENTLY_SERVICE_ADDRESS = os.getenv(
     "EVIDENTLY_SERVICE_ADDRESS", "http://localhost:8085"
 )
@@ -65,10 +65,10 @@ def save_to_evidently_service(record, prediction):
     )
 
 
-def get_learner(model_run, tracking_server):
+def get_learner(model_run, tracking_server, tracking_server_port):
     """get model from mlflow model registry"""
     app.logger.info(
-        "loading model from file %s and uri http://%s:80" % (model_run, tracking_server)
+        "loading model from file %s and uri http://%s:%s" % (model_run, tracking_server, tracking_server_port)
     )
 
     mlflow.set_tracking_uri(f"http://{tracking_server}:80")
@@ -106,8 +106,9 @@ def convert_request_to_image_format(image_encoded_as_string):
 
 # get model from env
 learn = get_learner(
-    "runs:/5e8554e66b654f54ae52a7aeb9ff8b0d/model",
+    os.getenv("RUN_ID_STR", "runs:/5e8554e66b654f54ae52a7aeb9ff8b0d/model"),
     os.getenv("TRACKING_SERVER_HOST", "localhost"),
+    os.getenv("TRACKING_SERVER_PORT", "80"),
 )
 
 
@@ -142,7 +143,6 @@ def get_info():
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    """
     print(request.get_json())
     request_dict = json.loads(request.get_json())
     del request_dict["index"]
@@ -158,8 +158,8 @@ def predict():
     logging.info("save to db")
     save_to_evidently_service(request_dict, y_pred)
     logging.info("save to evidently")
-    """
-    return_dict = {"y_pred": 9, "labels": 10}
+
+    #return_dict = {"y_pred": 9, "labels": 10}
     return jsonify(return_dict)
 
 
