@@ -1,7 +1,5 @@
 # mlops_zoomcamp_homework
-Homeworks and project of mlops_zoomcamp https://github.com/DataTalksClub/mlops-zoomcamp
-
-The following parts are referring to the project of the course. Find in in folder [06_project](06_project).
+Project of mlops_zoomcamp https://github.com/DataTalksClub/mlops-zoomcamp
 
 # problem description
 Your customer is a company which sells minifigures and experiences a high number of returns. Returned minifigures might have an undamaged packaging. Therefore, all minifigures are firstly put in one large box. Your task is now to classify these minifigures to enable the customer to pack the minifigures in the correct new packaging.
@@ -21,31 +19,32 @@ Here is a sample of it's content including the labels.
 # installation
 ## requirements
 1) Please get an AWS S3 bucket to store the mlflow artifacts
-    1) Please save your config setup in .env file you create with:
-        1) copy [sample.env](sample.env) to .env with 
-            ```bash
-            cp sample.env .env
-            ```
-        2) adapt values according to your setup in .env 
-            ```bash 
-            nano .env
-            ```
-2) Get develop environment
-    1) clone repo and go to folder
+
+2) Run installation of commit-hooks, python packages and environment variables with
+    1) prepare setup installation
+        ```bash 
+        sudo apt install make
+        ```
     2) ```bash
-        pipenv install
+        sudo apt install make-guile
         ```
-    3) ```bash
-         pipenv shell
+    3)
+        ```bash
+        make setup
         ```
+    2) adapt values according to your setup in .env 
+        ```bash 
+        nano .env
+        ```
+
 3) Get data from kaggle
     * download with script
         1) follow https://www.kaggle.com/general/74235 to create kaggle API key file kaggle.json
         2) use script
-         ```bash
-            python 06_project/src/get_data.py
-        ```
-    * download manually at https://www.kaggle.com/datasets/ihelon/lego-minifigures-classification and copy to 06_project/data
+            ```bash
+            python src/get_data.py
+            ```
+    * download manually at https://www.kaggle.com/datasets/ihelon/lego-minifigures-classification and copy to 'data' folder
 
 ## recommended
 1) faster model training: AWS instance with ca. 8 CPU cores (e.g. running Ubuntu)
@@ -53,24 +52,29 @@ Here is a sample of it's content including the labels.
     * please set your config in the .env file  
 
 # get started 
-1) feeling for dataset: [06_project/src/test.ipynb](06_project/src/test.ipynb)
-3) start mlflow tracking server
+1) feeling for dataset: [src/test.ipynb](src/test.ipynb)
+    1) link jupyter notebook's kernel to this environment with
+        ```bash
+        python -m ipykernel install --user --name=mlops_zoomcamp_homework
+        ```
+        
+2) start mlflow tracking server
     * locally with 
         ```bash
         mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./ --host localhost
         ```
     * (preferred) remotely: follow steps in mlflow tracking server section
-3) train the model: [06_project/src/train_model.py](06_project/src/train_model.py)
+3) train the model: [src/train_model.py](src/train_model.py)
     * locally with : 
         ```bash 
-        python 06_project/src/train_model.py
+        python src/train_model.py
         ```
     * (preferred) remotely:
         1) adapt TRACKING_SERVER_HOST in train_model.py with your remote AWS instance for tracking config (note: Here two different instances are used)
         2) edit ~/.aws/config with your aws account settings
         3) run with: 
             ```bash
-            python 06_project/src/train_model.py --tracking_server=YOUR_SERVER
+            python src/train_model.py --tracking_server=YOUR_SERVER
             ```
 4) OR: use pretrained model from mlflow registry
     1) use run_id: "5c3eca95a08f47a48066177e853ede80" from local mlflow registry
@@ -115,37 +119,35 @@ Here is a sample of it's content including the labels.
     * pre-commit hooks
     * CI pipeline
 
-# tests
+# other Makefile options
 ## unittests
 execute with
-1) go to 06_project folder
-2) ```bash
-    python -m unittest tests/unittests.py
-    ```
+```bash
+make unittests
+```
 
 ## integration_tests
-execute with
-1) go to 06_project folder
-2) ```bash
-    chmod +x tests/integration_test.sh
+executes following steps:
+* code quality check
+* unittests
+* docker image build 
+with:
+```bash
+make integration_test
+```
+
+# local prefect deployment
+1) ```bash
+    prefect config set PREFECT_ORION_UI_API_URL="https://<external_IP>:4200/api"
+    ```
+2) in project_06 folder run 
+    ```bash
+    python src/batch_prefect_flow.py
     ```
 3) ```bash
-    ./tests/integration_tests.sh
+    prefect deployment create src/batch_prefect_deployment.py
     ```
-
-# makefile, pre-commit hooks
-requirements
-1) ```bash 
-    sudo apt install make
-    ```
-2) ```bash
-    sudo apt install make-guile
-    ```
-3) go to 06_project folder
-4) run setup (as well for pre-commit hooks) with 
-    ```bash
-    make setup
-    ```
+4) in prefect UI: create Work Queue with deployment
 
 
 # further installation option
@@ -171,16 +173,7 @@ requirements
         sudo install docker-compose
         ```
 
-## installation jupyter notebook
-1) for jupyter notebook
-    1) python -m ipykernel install --user --name=mlops_zoomcamp_homework
-    2) for help see
-        * https://dataschool.com/data-modeling-101/running-jupyter-notebook-on-an-ec2-server/
-        * https://medium.com/@EdwardCrowder/mlops-zoomcamp-2022-ff12dda6b5cc
-
-
-
-## Prefect setup
+## remote Prefect setup
 on remote aws
 1) ```bash
     prefect config set PREFECT_ORION_UI_API_URL="https://<external_IP>:4200/api"
@@ -193,17 +186,6 @@ on remote aws
     ```
 4) select S3 AWS
 
-on local
-1) ```bash
-    prefect config set PREFECT_ORION_UI_API_URL="https://<external_IP>:4200/api"
-    ```
-2) in project_06 folder run 
-    ```bash
-    python src/batch_prefect_flow.py
-    ```
-3) ```bash
-    prefect deployment create src/batch_prefect_deployment.py
-    ```
 
 on prefect UI
 1) create Work Queue with deployment
@@ -218,5 +200,7 @@ on prefect UI
 # TODOs
 1) monitoring more beautiful
 2) CD (later)
-3) streaming in docker
+    * terraform
+    * CD stage for repo in GitHub 
+3) streaming in docker container
 4) check s3 connection pool full warning for batch_docker.py

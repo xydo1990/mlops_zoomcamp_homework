@@ -12,6 +12,7 @@ build: quality_checks unittests
 	docker-compose -f "../docker-compose.yml" build
 
 integration_test: build
+	chmod +x tests/integration_test.sh
 	bash tests/integration_test.sh
 
 publish: build integration_test
@@ -26,4 +27,6 @@ publish_only:
 
 setup:
 	pipenv install --dev
+	pipenv shell
 	pre-commit install
+	cp sample.env .env
