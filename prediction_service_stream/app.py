@@ -130,11 +130,11 @@ def get_info():
                 <div class="data">
                 <p> {
                     "index":0,
-                    "path":"\/home\/ubuntu\/mlops_zoomcamp_homework\/06_project\/data\/test\/001.jpg",
+                    "path":"\/home\/ubuntu\/mlops_zoomcamp_homework\/data\/test\/001.jpg",
                     "class_id":32,
                     "minifigure_name":"JANNAH",
                     "labels":"jannah",
-                    "fname":"\/home\/ubuntu\/mlops_zoomcamp_homework\/06_project\/data\/test\/001.jpg"}
+                    "fname":"\/home\/ubuntu\/mlops_zoomcamp_homework\/data\/test\/001.jpg"}
                 </p>
                 </div>
                </div>"""

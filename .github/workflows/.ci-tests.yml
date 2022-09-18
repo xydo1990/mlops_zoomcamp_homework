@@ -4,12 +4,12 @@ on:
     branches:
       - 'develop'
     paths:
-      - '06_project/src/**'
+      - 'src/**'
   push:
     branches:
       - 'feature_project_WIP'
     paths:
-      - '06_project/src/**'
+      - 'src/**'
 
 env:
   AWS_DEFAULT_REGION: 'eu-west-2'
@@ -37,12 +37,12 @@ jobs:
         run: pip install pipenv && pipenv install --dev
 
       - name: Run Unit tests
-        working-directory: "06_project/tests"
+        working-directory: "tests"
         run: pipenv run pytest unittests.py
 
       - name: Lint
         working-directory: "."
-        run: pipenv run pylint --recursive=y --rcfile=".pylintrc" ./06_project/src
+        run: pipenv run pylint --recursive=y --rcfile=".pylintrc" ./src
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -52,25 +52,6 @@ jobs:
           aws-region: ${{ env.AWS_DEFAULT_REGION }}
 
       - name: Integration Test
-        working-directory: "06_project"
+        working-directory: "."
         run: |
           . tests/integration_test_cicd.sh
-
-  tf-plan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_DEFAULT_REGION }}
-
-      - uses: hashicorp/setup-terraform@v2
-
-      - name: TF plan
-        id: plan
-        working-directory: '06_project/src/infrastructure'
-        run: |
-          terraform init -backend-config="key=mlops-zoomcamp-prod.tfstate" --reconfigure && terraform plan --var-file vars/prod.tfvars

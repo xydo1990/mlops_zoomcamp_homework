@@ -133,7 +133,7 @@ if __name__ == "__main__":
         "--data_path",
         type=str,
         help="path to csv of data to predict",
-        default="/home/ubuntu/mlops_zoomcamp_homework/06_project/data/test.csv",
+        default="/home/ubuntu/mlops_zoomcamp_homework/data/test.csv",
     )
     parser.add_argument(
         "--model_run",
@@ -145,7 +145,7 @@ if __name__ == "__main__":
         "--output_file",
         type=str,
         help="path of parquet file to store predictions",
-        default="/home/ubuntu/mlops_zoomcamp_homework/06_project/outputs/batch_predictions.parquet",
+        default="/home/ubuntu/mlops_zoomcamp_homework/outputs/batch_predictions.parquet",
     )
     parser.add_argument(
         "--tracking_server",

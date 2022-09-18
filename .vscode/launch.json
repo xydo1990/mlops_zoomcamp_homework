@@ -19,7 +19,7 @@
             "request": "launch",
             "module": "flask",
             "env": {
-                "FLASK_APP": "06_project/src/streaming_monitoring.py",
+                "FLASK_APP": "src/streaming_monitoring.py",
                 "FLASK_ENV": "development",
                 "FLASK_DEBUG": "0"
             },

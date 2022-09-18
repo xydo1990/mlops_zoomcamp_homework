@@ -28,7 +28,7 @@ def preprocess_data(df, metadata):
     df_lego = pd.merge(df, metadata["minifigure_name"], on="class_id")
     df_lego["labels"] = df_lego["minifigure_name"].apply(lambda x: x.lower())
     df_lego["fname"] = (
-        "/home/ubuntu/mlops_zoomcamp_homework/06_project/data/" + df_lego.path
+        "/home/ubuntu/mlops_zoomcamp_homework/data/" + df_lego.path
     )
     # HOTFIX why needed to remove path containing my user name?
     df_lego["path"] = df_lego["fname"]
@@ -89,7 +89,7 @@ if __name__ == "__main__":
         "--data_path",
         type=str,
         help="path to csv of data to predict",
-        default="/home/ubuntu/mlops_zoomcamp_homework/06_project/data/test.csv",
+        default="/home/ubuntu/mlops_zoomcamp_homework/data/test.csv",
     )
     args = parser.parse_args()
     send_data(args.data_path)

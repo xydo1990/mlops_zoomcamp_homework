@@ -2,7 +2,7 @@ import os
 import unittest
 
 import pandas as pd
-from src.batch_docker import get_data, store_predictions
+from prediction_service_batch.batch_docker import get_data, store_predictions
 
 
 class TestBatchDocker(unittest.TestCase):

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # based on solution of homework 6
-# call from 06_project folder
+# call from repo root folder
 
 docker-compose up -d --build
 

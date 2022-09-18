@@ -2,11 +2,11 @@ version: '3.3'
 
 services:
   batch_prediction:
-    build: ./06_project/
-    image: project_batch
-    container_name: batch_prediction
+    build: ./prediction_service_batch/
+    image: prediction_service_batch
+    container_name: prediction_service_batch
     volumes:
-      - ./06_project/data:/home/ubuntu/mlops_zoomcamp_homework/06_project/data
+      - ./data:/home/ubuntu/mlops_zoomcamp_homework/data
     networks:
       - frontend
     environment:
@@ -20,9 +20,9 @@ services:
       - nginx
 
   prediction_service:
-    build: ./prediction_service/
-    image: prediction_service
-    container_name: prediction_service
+    build: ./prediction_service_stream/
+    image: prediction_service_stream
+    container_name: prediction_service_stream
     depends_on:
       - evidently_service
       - mongo

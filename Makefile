@@ -9,7 +9,7 @@ quality_checks:
 	pylint --rcfile="../.pylintrc" .
 
 build: quality_checks unittests
-	docker-compose -f "../docker-compose.yml" build
+	docker-compose build
 
 integration_test: build
 	chmod +x tests/integration_test.sh

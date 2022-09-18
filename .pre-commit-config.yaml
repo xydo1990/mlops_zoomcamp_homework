@@ -40,7 +40,7 @@ repos:
       pass_filenames: false
       always_run: true
       args: [
-        "06_project/tests/unittests.py"
+        "tests/unittests.py"
       ]
 
 # TODO add integration tests as well via shell script
