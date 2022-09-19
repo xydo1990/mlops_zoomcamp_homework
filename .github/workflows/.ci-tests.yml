@@ -12,6 +12,7 @@ on:
       - 'src/**'
       - 'tests/**'
       - '.github/workflows/**'
+      - 'pyproject.toml'
 
 # TODO remove AWS Bucket from secrets
 env:

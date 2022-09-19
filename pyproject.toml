@@ -1,6 +1,6 @@
 [tool.pylint.messages_control]
 disable = [
-    C0103,
+    "C0103,
     W0621,
     E0401,
     W0401,
@@ -21,12 +21,12 @@ disable = [
     W1201,
     W3101,
     W1401,
-    W1514
+    W1514"
 ]
 
 [tool.isort]
 profile = "black"
-skip=.gitignore,__init__.py
+skip=".gitignore,__init__.py"
 
 
 [tool.pytest.ini_options]
