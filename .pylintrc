@@ -75,7 +75,6 @@ confidence=
 # no Warning level messages displayed, use "--disable=all --enable=classes
 # --disable=W".
 disable=C0103,
-        C0101,
         W0621,
         E0401,
         W0401,

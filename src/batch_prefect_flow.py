@@ -157,12 +157,18 @@ if __name__ == "__main__":
         help="mlflow tracking server host",
         default="localhost",
     )
+    parser.add_argument(
+        "--mlflow_bucket",
+        type=str,
+        help="mlflow tracking server host",
+        default="localhost",
+    )
     args = parser.parse_args()
 
     # HOTFIX TODO remove
-    args.tracking_server = os.getenv("TRACKING_SERVER_HOST")
+    args.tracking_server = os.getenv("TRACKING_SERVER_HOST", args.tracking_server)
     args.output_file = (
-        "s3://" + os.getenv("MLFLOW_BUCKET_NAME") + "/batch_prediction.parquet"
+        "s3://" + os.getenv("MLFLOW_BUCKET_NAME", args.mlflow_bucket) + "/batch_prediction.parquet"
     )
 
     run(args.data_path, args.model_run, args.tracking_server, args.output_file)
