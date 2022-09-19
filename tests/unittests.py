@@ -10,7 +10,13 @@ class TestBatchDocker(unittest.TestCase):
     @staticmethod
     def test_batch_data_preprocess():
         df = pd.DataFrame({"path": ["spider_1", "bee_2"], "class_id": [1, 0]})
-        df_metadata = pd.DataFrame({"class_id": [0, 1], "lego_ids": ["lala", "blub"], "minifigure_name": ["Heinz", "Gerd"]})
+        df_metadata = pd.DataFrame(
+            {
+                "class_id": [0, 1],
+                "lego_ids": ["lala", "blub"],
+                "minifigure_name": ["Heinz", "Gerd"],
+            }
+        )
         df_metadata = df_metadata.set_index("class_id")
         df_lego = preprocess_data(df, df_metadata)
 

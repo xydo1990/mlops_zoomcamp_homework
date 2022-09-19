@@ -6,13 +6,13 @@ unittests:
 quality_checks:
 	isort .
 	black .
-	pylint --rcfile=".pylintrc" ./src
+	pylint ./src
 
 # training with local tracking server
-train:
-	docker-compose -f src/docker-compose-train.yml up -d
-	python src/train_model.py --tracking_server localhost
-	docker-compose -f src/docker-compose-train.yml down
+#train:
+#	docker-compose -f src/docker-compose-train.yml up -d
+#	python src/train_model.py --tracking_server localhost
+#	docker-compose -f src/docker-compose-train.yml down
 
 build: quality_checks unittests
 	docker-compose build

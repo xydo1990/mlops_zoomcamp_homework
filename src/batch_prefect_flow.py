@@ -111,7 +111,9 @@ def calculate_metrics(y_pred, y):
 
 
 @flow(task_runner=SequentialTaskRunner())
-def run_flow(data_path, model_run, tracking_server_ip, tracking_server_port, output_file):
+def run_flow(
+    data_path, model_run, tracking_server_ip, tracking_server_port, output_file
+):
     """handles run of loading model and data, make predictions and store result"""
     logger = get_run_logger()
     logger.info("get data")
@@ -173,8 +175,14 @@ if __name__ == "__main__":
 
     # HOTFIX TODO remove
     args.tracking_server_ip = os.getenv("TRACKING_SERVER_HOST", args.tracking_server_ip)
-    #args.output_file = (
+    # args.output_file = (
     #    "s3://" + os.getenv("MLFLOW_BUCKET_NAME", args.mlflow_bucket) + "/batch_prediction.parquet"
-    #)
+    # )
 
-    run_flow(args.data_path, args.model_run, args.tracking_server_ip, args.tracking_server_port, args.output_file)
+    run_flow(
+        args.data_path,
+        args.model_run,
+        args.tracking_server_ip,
+        args.tracking_server_port,
+        args.output_file,
+    )
