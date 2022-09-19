@@ -1,0 +1,35 @@
+[tool.pylint.messages_control]
+disable = [
+    C0103,
+    W0621,
+    E0401,
+    W0401,
+    C0114,
+    E1101,
+    E0602,
+    R1705,
+    C0115,
+    C0116,
+    W0511,
+    W1404,
+    W0614,
+    E0102,
+    W0614,
+    R0801,
+    W1202,
+    C0209,
+    W1201,
+    W3101,
+    W1401,
+    W1514
+]
+
+[tool.isort]
+profile = "black"
+skip=.gitignore,__init__.py
+
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::FutureWarning"
+]

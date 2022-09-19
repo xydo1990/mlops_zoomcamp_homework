@@ -8,9 +8,9 @@ from src.batch_prefect_flow import run_flow
 # create prefect deployment of run_flow with CronSchedule
 deployment = Deployment.build_from_flow(
     flow=run_flow,
-    name="cron_deployment",
+    name="model_deployment_cron",
     schedule=CronSchedule(cron="0 9 15 * *", timezone="Europe/Berlin"),
     infrastructure=Process(),
-    tags=["ml"],
+    work_queue_name="prod"
 )
 deployment.apply()

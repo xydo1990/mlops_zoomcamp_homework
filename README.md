@@ -39,7 +39,7 @@ Here is a sample of it's content including the labels.
 
 3) Get data from kaggle
     * download with script
-        1) follow https://www.kaggle.com/general/74235 to create kaggle API key file kaggle.json
+        1) follow https://www.kaggle.com/general/74235 to create kaggle API key file ~/.kaggle/kaggle.json
         2) use script
             ```bash
             python src/get_data.py
@@ -58,26 +58,26 @@ Here is a sample of it's content including the labels.
         python -m ipykernel install --user --name=mlops_zoomcamp_homework
         ```
         
-2) start mlflow tracking server
+2) start mlflow tracking server and train 
     * locally with 
-        ```bash
-        mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./ --host localhost
-        ```
-    * (preferred) remotely: follow steps in mlflow tracking server section
-3) train the model: [src/train_model.py](src/train_model.py)
-    * locally with : 
-        ```bash 
-        python src/train_model.py
-        ```
-    * (preferred) remotely:
-        1) adapt TRACKING_SERVER_HOST in train_model.py with your remote AWS instance for tracking config (note: Here two different instances are used)
-        2) edit ~/.aws/config with your aws account settings
-        3) run with: 
+        1) start mlflow server
+            ```bash
+            mlflow server --backend-store-uri sqlite:///mlflow/mlflow.db --default-artifact-root ./mlflow/artifacts --host 0.0.0.0 -p 5000
+            ```
+        2) run train_model script
+            ```bash
+            python src/train_model.py --tracking_server localhost
+            ```
+    * (preferred) remotely: 
+        1)follow steps in mlflow tracking server section
+        2) adapt TRACKING_SERVER_HOST in train_model.py with your remote AWS instance for tracking config (note: Here two different instances are used)
+        3) edit ~/.aws/config with your aws account settings
+        4) run with: 
             ```bash
             python src/train_model.py --tracking_server=YOUR_SERVER
             ```
 4) OR: use pretrained model from mlflow registry
-    1) use run_id: "5c3eca95a08f47a48066177e853ede80" from local mlflow registry
+    1) use run_id: "9633b33d48274dc3af5be5ee0d7771e2" from local mlflow registry. Set it in your .env file as MLFLOW_RUN_ID  # TODO adapt after next run
 5) deployment streaming and batch mode with docker containers
     1) start docker-compose file in repo root directory with 
         ```bash 
@@ -137,17 +137,22 @@ make integration_test
 ```
 
 # local prefect deployment
-1) ```bash
-    prefect config set PREFECT_ORION_UI_API_URL="https://<external_IP>:4200/api"
-    ```
-2) in project_06 folder run 
+1) start local prefect
     ```bash
-    python src/batch_prefect_flow.py
+    prefect orion start --host 0.0.0.0
     ```
-3) ```bash
+2) set prefect config to connect to local prefect
+    ```bash
+    prefect config set PREFECT_ORION_UI_API_URL="https://localhost:4200/api"
+    ```
+3) run 
+    ```bash
+    python src/batch_prefect_flow.py --data_path data/test.csv --output_file outputs/batch_prediction.parquet
+    ```
+4) ```bash
     prefect deployment create src/batch_prefect_deployment.py
     ```
-4) in prefect UI: create Work Queue with deployment
+5) in prefect UI: create Work Queue with deployment
 
 
 # further installation option

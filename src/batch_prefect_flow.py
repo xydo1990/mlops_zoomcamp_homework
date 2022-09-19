@@ -32,9 +32,9 @@ def store_predictions(df, y_pred, output_file, y=None):
         df_result["label"] = y
 
     # only needed if storing on local file system:
-    # dir_name = os.path.dirname(output_file)
-    # if not os.path.exists(dir_name):
-    #    os.makedirs(dir_name)
+    dir_name = os.path.dirname(output_file)
+    if not os.path.exists(dir_name):
+        os.makedirs(dir_name)
 
     logger.info("storing predictions to file" + output_file)
     df_result.to_parquet(output_file, engine="pyarrow", compression=None, index=False)
@@ -71,16 +71,16 @@ def get_data(data_path):
 
 
 @task
-def get_learner(model_run, tracking_server):
+def get_learner(model_run, tracking_server_ip, tracking_server_port):
     """get model from mlflow model registry"""
     logger = get_run_logger()
     logger.info(
-        "loading model from file %s and uri http://%s:5000"
-        % (model_run, tracking_server)
+        "loading model from file %s and uri http://%s:%s"
+        % (model_run, tracking_server_ip, tracking_server_port)
     )
     # os.environ["AWS_PROFILE"] = "default"
 
-    mlflow.set_tracking_uri(f"http://{tracking_server}:5000")
+    mlflow.set_tracking_uri(f"http://{tracking_server_ip}:{tracking_server_port}")
     logger.info(os.path.dirname(os.path.abspath(__file__)))
     learn = mlflow.pyfunc.load_model(
         model_run, dst_path=os.path.dirname(os.path.abspath(__file__))
@@ -111,13 +111,13 @@ def calculate_metrics(y_pred, y):
 
 
 @flow(task_runner=SequentialTaskRunner())
-def run_flow(data_path, model_run, tracking_server, output_file):
+def run_flow(data_path, model_run, tracking_server_ip, tracking_server_port, output_file):
     """handles run of loading model and data, make predictions and store result"""
     logger = get_run_logger()
     logger.info("get data")
     df_lego = get_data(data_path)
     logger.info("get model")
-    learner = get_learner(model_run, tracking_server)
+    learner = get_learner(model_run, tracking_server_ip, tracking_server_port)
     logger.info("make predictions")
     y_pred, y = make_predictions(learner, df_lego)
     logger.info("calculate metrics")
@@ -143,7 +143,7 @@ if __name__ == "__main__":
         "--model_run",
         type=str,
         help="run of model from mlflow model registry ",
-        default="runs:/5e8554e66b654f54ae52a7aeb9ff8b0d/model",
+        default="runs:/9633b33d48274dc3af5be5ee0d7771e2/model",
     )
     parser.add_argument(
         "--output_file",
@@ -152,10 +152,16 @@ if __name__ == "__main__":
         default="/home/ubuntu/mlops_zoomcamp_homework/outputs/batch_predictions.parquet",
     )
     parser.add_argument(
-        "--tracking_server",
+        "--tracking_server_ip",
         type=str,
-        help="mlflow tracking server host",
+        help="mlflow tracking server host IP",
         default="localhost",
+    )
+    parser.add_argument(
+        "--tracking_server_port",
+        type=int,
+        help="mlflow tracking server host port",
+        default=500,
     )
     parser.add_argument(
         "--mlflow_bucket",
@@ -166,9 +172,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # HOTFIX TODO remove
-    args.tracking_server = os.getenv("TRACKING_SERVER_HOST", args.tracking_server)
-    args.output_file = (
-        "s3://" + os.getenv("MLFLOW_BUCKET_NAME", args.mlflow_bucket) + "/batch_prediction.parquet"
-    )
+    args.tracking_server_ip = os.getenv("TRACKING_SERVER_HOST", args.tracking_server_ip)
+    #args.output_file = (
+    #    "s3://" + os.getenv("MLFLOW_BUCKET_NAME", args.mlflow_bucket) + "/batch_prediction.parquet"
+    #)
 
-    run(args.data_path, args.model_run, args.tracking_server, args.output_file)
+    run_flow(args.data_path, args.model_run, args.tracking_server_ip, args.tracking_server_port, args.output_file)

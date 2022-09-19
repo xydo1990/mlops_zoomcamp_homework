@@ -1,0 +1,14 @@
+version: '3.3'
+
+# run local mlflow server
+services:
+  web:
+      restart: always
+      build: ../mlflow
+      image: mlflow_server_local
+      container_name: mlflow_server_local
+      ports:
+        - "5000:5000"
+      volumes:
+        - '../mlflow_data:/app'
+      command: mlflow server --backend-store-uri sqlite:////app/mlflow.db --default-artifact-root /app/artifacts --host 0.0.0.0 -p 5000

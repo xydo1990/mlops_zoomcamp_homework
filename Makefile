@@ -8,6 +8,12 @@ quality_checks:
 	black .
 	pylint --rcfile=".pylintrc" ./src
 
+# training with local tracking server
+train:
+	docker-compose -f src/docker-compose-train.yml up -d
+	python src/train_model.py --tracking_server localhost
+	docker-compose -f src/docker-compose-train.yml down
+
 build: quality_checks unittests
 	docker-compose build
 
@@ -30,3 +36,6 @@ setup:
 	pipenv shell
 	pre-commit install
 	cp sample.env .env
+
+get_data:
+	python src/get_data.py
