@@ -2,11 +2,11 @@
 
 import base64
 import io
+import json
 import logging
 import logging.handlers
 import os
 from logging.config import dictConfig
-import json
 
 import numpy as np
 import pandas as pd
@@ -68,7 +68,8 @@ def save_to_evidently_service(record, prediction):
 def get_learner(model_run, tracking_server, tracking_server_port):
     """get model from mlflow model registry"""
     app.logger.info(
-        "loading model from file %s and uri http://%s:%s" % (model_run, tracking_server, tracking_server_port)
+        "loading model from file %s and uri http://%s:%s"
+        % (model_run, tracking_server, tracking_server_port)
     )
 
     mlflow.set_tracking_uri(f"http://{tracking_server}:80")
@@ -159,7 +160,7 @@ def predict():
     save_to_evidently_service(request_dict, y_pred)
     logging.info("save to evidently")
 
-    #return_dict = {"y_pred": 9, "labels": 10}
+    # return_dict = {"y_pred": 9, "labels": 10}
     return jsonify(return_dict)
 
 

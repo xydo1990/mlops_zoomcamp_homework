@@ -27,9 +27,7 @@ def preprocess_data(df, metadata):
     """
     df_lego = pd.merge(df, metadata["minifigure_name"], on="class_id")
     df_lego["labels"] = df_lego["minifigure_name"].apply(lambda x: x.lower())
-    df_lego["fname"] = (
-        "/home/ubuntu/mlops_zoomcamp_homework/data/" + df_lego.path
-    )
+    df_lego["fname"] = "/home/ubuntu/mlops_zoomcamp_homework/data/" + df_lego.path
     # HOTFIX why needed to remove path containing my user name?
     df_lego["path"] = df_lego["fname"]
     return df_lego

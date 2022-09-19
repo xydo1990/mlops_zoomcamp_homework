@@ -96,9 +96,7 @@ if __name__ == "__main__":
     mlflow.set_tracking_uri(f"http://{TRACKING_SERVER_HOST}:5000")
     os.environ["TORCH_HOME"] = "models\\resnet"  # setting the environment variable
     # path to downloaded dataset
-    path = os.path.join(
-        os.path.dirname(os.path.realpath(__file__)), args.data_path
-    )  
+    path = os.path.join(os.path.dirname(os.path.realpath(__file__)), args.data_path)
     torch.set_num_threads(args.n_cores)  # adapt to your hardware setup
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

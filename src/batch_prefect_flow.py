@@ -36,9 +36,9 @@ def store_predictions(df, y_pred, output_file, y=None):
     # if not os.path.exists(dir_name):
     #    os.makedirs(dir_name)
 
-    logger.info(f"storing predictions to file {output_file}")
+    logger.info("storing predictions to file" + output_file)
     df_result.to_parquet(output_file, engine="pyarrow", compression=None, index=False)
-    logger.info(f"size of saved data: {os.path.getsize(output_file) / 1000000}")
+    logger.info("size of saved data:" + str(os.path.getsize(output_file) / 1000000))
 
 
 def preprocess_data(df, metadata):
@@ -61,7 +61,7 @@ def preprocess_data(df, metadata):
 def get_data(data_path):
     """gets data from path, loads it and returns data loader"""
     logger = get_run_logger()
-    logger.info(f"loading data from file path: {data_path}")
+    logger.info("loading data from file path:" + data_path)
     df = pd.read_csv(data_path, encoding="utf8")
     lego_metadata = pd.read_csv(
         os.path.join(os.path.dirname(data_path), "metadata.csv"), index_col=0
@@ -75,7 +75,8 @@ def get_learner(model_run, tracking_server):
     """get model from mlflow model registry"""
     logger = get_run_logger()
     logger.info(
-        f"loading model from file {model_run} and uri http://{tracking_server}:5000"
+        "loading model from file %s and uri http://%s:5000"
+        % (model_run, tracking_server)
     )
     # os.environ["AWS_PROFILE"] = "default"
 
@@ -106,11 +107,11 @@ def calculate_metrics(y_pred, y):
     """
     logger = get_run_logger()
     accuracy = accuracy_score(y, y_pred)
-    logger.info(f"accuracy {accuracy}")
+    logger.info("accuracy" + accuracy)
 
 
 @flow(task_runner=SequentialTaskRunner())
-def run(data_path, model_run, tracking_server, output_file):
+def run_flow(data_path, model_run, tracking_server, output_file):
     """handles run of loading model and data, make predictions and store result"""
     logger = get_run_logger()
     logger.info("get data")

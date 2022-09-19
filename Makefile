@@ -6,7 +6,7 @@ unittests:
 quality_checks:
 	isort .
 	black .
-	pylint --rcfile="../.pylintrc" .
+	pylint --rcfile=".pylintrc" ./src
 
 build: quality_checks unittests
 	docker-compose build
