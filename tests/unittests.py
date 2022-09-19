@@ -3,24 +3,22 @@ import unittest
 
 import pandas as pd
 
-from prediction_service_batch.batch_docker import get_data, store_predictions
+from prediction_service_batch.batch_docker import preprocess_data, store_predictions
 
 
 class TestBatchDocker(unittest.TestCase):
     @staticmethod
     def test_batch_data_preprocess():
-        data_path = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            "data",
-            "index.csv",
-        )
-        df = get_data(data_path)
+        df = pd.DataFrame({"path": ["spider_1", "bee_2"], "class_id": [1, 0]})
+        df_metadata = pd.DataFrame({"class_id": [0, 1], "lego_ids": ["lala", "blub"], "minifigure_name": ["Heinz", "Gerd"]})
+        df_metadata = df_metadata.set_index("class_id")
+        df_lego = preprocess_data(df, df_metadata)
 
         # check if columns were created as expected
-        assert "fname" in df.columns
-        assert "labels" in df.columns
+        assert "fname" in df_lego.columns
+        assert "labels" in df_lego.columns
         # check if merge with classnames was done
-        assert "spider-man" in list(df["labels"])
+        assert "heinz" in list(df_lego["labels"])
 
     @staticmethod
     def test_batch_store_predictions():

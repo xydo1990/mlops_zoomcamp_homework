@@ -16,6 +16,8 @@
 /include/
 /bin/
 .env
+.pytest_cache*
+*__pycache__*
 *.pyc
 *.parquet
 *.ipynb_checkpoints*

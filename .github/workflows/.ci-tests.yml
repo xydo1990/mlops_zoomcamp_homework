@@ -10,6 +10,7 @@ on:
       - 'feature_reproducability_WIP'
     paths:
       - 'src/**'
+      - 'tests/**'
 
 env:
   AWS_DEFAULT_REGION: 'eu-west-z'
