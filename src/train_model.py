@@ -84,7 +84,7 @@ if __name__ == "__main__":
         "--n_cores",
         type=int,
         help="number of cpu cores",
-        default=1,
+        default=4,
     )
     parser.add_argument(
         "--data_path",

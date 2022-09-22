@@ -60,14 +60,12 @@ Here is a sample of it's content including the labels.
 
 2) start mlflow tracking server and train
     * locally with
-        1) start mlflow server
+        1) start local docker environment
             ```bash
-            mlflow server --backend-store-uri sqlite:///mlflow/mlflow.db --default-artifact-root ./mlflow/artifacts --host 0.0.0.0 -p 5000
+            make train
             ```
-        2) run train_model script
-            ```bash
-            python src/train_model.py --tracking_server localhost
-            ```
+            TODO: cannot reach http://s3:9001 atm, but model stored to src/modeks\resnet folder
+
     * (preferred) remotely:
         1) follow steps in mlflow tracking server section
         2) adapt TRACKING_SERVER_HOST in train_model.py with your remote AWS instance for tracking config (note: Here two different instances are used)
@@ -76,9 +74,10 @@ Here is a sample of it's content including the labels.
             ```bash
             python src/train_model.py --tracking_server=<YOUR_SERVER>
             ```
-4) OR: use pretrained model from mlflow registry
-    1) use run_id: "9633b33d48274dc3af5be5ee0d7771e2" from local mlflow registry. Set it in your .env file as MLFLOW_RUN_ID  # TODO adapt after next run
-5) deployment streaming and batch mode with docker containers
+3) select best run and tag model as in "Production" stage
+    * run notebook [src/get_model_from_registry.jpynb]
+    * OR: use GUI at e.g. localhost:80 (or your remote address)
+4) deployment streaming and batch mode with docker containers
     1) start docker-compose file in repo root directory with
         ```bash
         docker-compose up -d --build
