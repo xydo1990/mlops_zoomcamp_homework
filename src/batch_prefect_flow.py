@@ -163,7 +163,7 @@ if __name__ == "__main__":
         "--tracking_server_port",
         type=int,
         help="mlflow tracking server host port",
-        default=500,
+        default=5000,
     )
     parser.add_argument(
         "--mlflow_bucket",

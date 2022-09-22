@@ -1,14 +1,128 @@
 version: '3.3'
 
+# with help from https://github.com/aganse/docker_mlflow_db/blob/master/docker-compose.yaml
+
 # run local mlflow server
 services:
+  # use local s3 AWS based bucket for first tries to store artifacts
+  # not required if you are using remote AWS bucket
+  #localstack:
+  #  image: localstack/localstack:latest
+  #  container_name: mlflow_s3
+  #  env_file:
+  #    - ../.env
+  #  environment:
+  #    - EDGE_PORT=4566
+  #    - SERVICES=lambda,s3
+  #  ports:
+  #    - '4566-4583:4566-4583'
+  #  volumes:
+  #    - "${TEMPDIR:-/tmp/localstack}:/tmp/localstack"
+  #    - "/var/run/docker.sock:/var/run/docker.sock"
+  #  networks:
+  #    - backend
+
+  s3:
+    image:  minio/minio:RELEASE.2021-11-24T23-19-33Z
+    restart: unless-stopped
+    container_name: mlflow_s3
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=${AWS_ACCESS_KEY_ID}
+      - MINIO_ROOT_PASSWORD=${AWS_SECRET_ACCESS_KEY}
+    command: server /data --console-address ":9001"
+    networks:
+      - frontend
+      - backend
+    volumes:
+      - minio_volume:/data
+
+  db:
+    restart: always
+    image: postgres:latest
+    container_name: mlflow_db
+    expose:
+        - "5432"
+    networks:
+        - backend
+    environment:
+        - MUID=$UID
+        - MGID=$GID
+        - POSTGRES_DB=${POSTGRES_DATABASE}
+        - POSTGRES_USER=${POSTGRES_USER}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - db_datapg:/var/lib/postgresql/data
+
   web:
-      restart: always
-      build: ../mlflow
-      image: mlflow_server_local
-      container_name: mlflow_server_local
-      ports:
-        - "5000:5000"
-      volumes:
-        - '../mlflow_data:/app'
-      command: mlflow server --backend-store-uri sqlite:////app/mlflow.db --default-artifact-root /app/artifacts --host 0.0.0.0 -p 5000
+    restart: always
+    build: ./mlflow
+    image: mlflow_server
+    container_name: mlflow_server
+    expose:
+      - "5000"
+    networks:
+      - frontend
+      - backend
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - MLFLOW_S3_ENDPOINT_URL=${MLFLOW_S3_ENDPOINT_URL}
+    command: mlflow server --backend-store-uri postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DATABASE} --default-artifact-root s3://${MLFLOW_BUCKET_NAME} --host 0.0.0.0 -p 5000
+    depends_on:
+      - db
+      - create_s3_buckets
+
+  nginx:
+    restart: always
+    build: ./nginx
+    image: mlflow_nginx
+    container_name: mlflow_nginx
+    ports:
+        - "${TRACKING_SERVER_HOST_PORT}:80"
+    networks:
+        - frontend
+    depends_on:
+        - web
+
+  create_s3_buckets:
+    image: minio/mc
+    depends_on:
+      - "s3"
+    entrypoint: >
+      /bin/sh -c "
+      until (/usr/bin/mc alias set minio http://s3:9000 '${AWS_ACCESS_KEY_ID}' '${AWS_SECRET_ACCESS_KEY}') do echo '...waiting...' && sleep 1; done;
+      /usr/bin/mc mb minio/mlflow;
+      exit 0;
+      "
+    networks:
+      - backend
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+
+volumes:
+  db_datapg: {}
+  minio_volume: {}
+
+#  mlflow:
+#    restart: always
+#    image: mlflow_server:latest
+#    container_name: mlflow_server_local
+#    env_file:
+#      - ../.env
+#    environment:
+#      - MLFLOW_S3_ENDPOINT_URL=s3://${MLFLOW_BUCKET_NAME}
+#    ports:
+#      - "5000:5000"
+#    volumes:
+#      - '../mlflow_data:/app'
+#    depends_on:
+#      - localstack
+#    command: mlflow server --backend-store-uri sqlite:////app/mlflow.db --default-artifact-root s3://${MLFLOW_BUCKET_NAME} --host 0.0.0.0 -p 5000

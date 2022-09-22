@@ -17,6 +17,8 @@
 /mlflow_data/artifacts*
 /include/
 /bin/
+/tmp/
+*-jvsc-*
 .env
 .pytest_cache*
 *__pycache__*

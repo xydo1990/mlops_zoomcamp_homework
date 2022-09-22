@@ -22,7 +22,7 @@ Here is a sample of it's content including the labels.
 
 2) Run installation of commit-hooks, python packages and environment variables with
     1) prepare setup installation
-        ```bash 
+        ```bash
         sudo apt install make
         ```
     2) ```bash
@@ -32,8 +32,8 @@ Here is a sample of it's content including the labels.
         ```bash
         make setup
         ```
-    2) adapt values according to your setup in .env 
-        ```bash 
+    2) adapt values according to your setup in .env
+        ```bash
         nano .env
         ```
 
@@ -49,17 +49,17 @@ Here is a sample of it's content including the labels.
 ## recommended
 1) faster model training: AWS instance with ca. 8 CPU cores (e.g. running Ubuntu)
 2) AWS PostgreSQL database for mlflow server
-    * please set your config in the .env file  
+    * please set your config in the .env file
 
-# get started 
+# get started
 1) feeling for dataset: [src/test.ipynb](src/test.ipynb)
     1) link jupyter notebook's kernel to this environment with
         ```bash
         python -m ipykernel install --user --name=mlops_zoomcamp_homework
         ```
-        
-2) start mlflow tracking server and train 
-    * locally with 
+
+2) start mlflow tracking server and train
+    * locally with
         1) start mlflow server
             ```bash
             mlflow server --backend-store-uri sqlite:///mlflow/mlflow.db --default-artifact-root ./mlflow/artifacts --host 0.0.0.0 -p 5000
@@ -68,19 +68,19 @@ Here is a sample of it's content including the labels.
             ```bash
             python src/train_model.py --tracking_server localhost
             ```
-    * (preferred) remotely: 
-        1)follow steps in mlflow tracking server section
+    * (preferred) remotely:
+        1) follow steps in mlflow tracking server section
         2) adapt TRACKING_SERVER_HOST in train_model.py with your remote AWS instance for tracking config (note: Here two different instances are used)
         3) edit ~/.aws/config with your aws account settings
-        4) run with: 
+        4) run with:
             ```bash
-            python src/train_model.py --tracking_server=YOUR_SERVER
+            python src/train_model.py --tracking_server=<YOUR_SERVER>
             ```
 4) OR: use pretrained model from mlflow registry
     1) use run_id: "9633b33d48274dc3af5be5ee0d7771e2" from local mlflow registry. Set it in your .env file as MLFLOW_RUN_ID  # TODO adapt after next run
 5) deployment streaming and batch mode with docker containers
-    1) start docker-compose file in repo root directory with 
-        ```bash 
+    1) start docker-compose file in repo root directory with
+        ```bash
         docker-compose up -d --build
         ```
         * mlflow registry
@@ -96,7 +96,7 @@ Here is a sample of it's content including the labels.
         MONGODB_ADDRESS="mongodb://localhost:27017"
         EVIDENTLY_SERVICE_ADDRESS = os.getenv(
         "EVIDENTLY_SERVICE", "http://localhost:8085")
-    6) go to prediction_service folder and run 
+    6) go to prediction_service folder and run
         ```bash
         python prediction_service/streaming_send_data.py
         ```
@@ -130,7 +130,7 @@ make unittests
 executes following steps:
 * code quality check
 * unittests
-* docker image build 
+* docker image build
 with:
 ```bash
 make integration_test
@@ -145,7 +145,7 @@ make integration_test
     ```bash
     prefect config set PREFECT_ORION_UI_API_URL="https://localhost:4200/api"
     ```
-3) run 
+3) run
     ```bash
     python src/batch_prefect_flow.py --data_path data/test.csv --output_file outputs/batch_prediction.parquet
     ```
@@ -156,7 +156,7 @@ make integration_test
 
 
 # further installation option
-## installation on AWS instance 
+## installation on AWS instance
 1) installation, including aws cloud instance and s3 storage (using python 3.9)
     1) ```bash
         sudo apt-get update
@@ -173,7 +173,7 @@ make integration_test
     5) enter your aws credentials
         ```bash
         aws configure
-        ```  
+        ```
     6) ```bash
         sudo install docker-compose
         ```
@@ -206,6 +206,6 @@ on prefect UI
 1) monitoring more beautiful
 2) CD (later)
     * terraform
-    * CD stage for repo in GitHub 
+    * CD stage for repo in GitHub
 3) streaming in docker container
 4) check s3 connection pool full warning for batch_docker.py

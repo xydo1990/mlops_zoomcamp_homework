@@ -75,6 +75,12 @@ if __name__ == "__main__":
         default="localhost",
     )
     parser.add_argument(
+        "--tracking_server_port",
+        type=str,
+        help="mlflow tracking server host port",
+        default="5000",
+    )
+    parser.add_argument(
         "--n_cores",
         type=int,
         help="number of cpu cores",
@@ -93,7 +99,12 @@ if __name__ == "__main__":
     os.environ["AWS_PROFILE"] = "default"  # fill in with your AWS profile.
     # fill in with the public DNS of the EC2 instance
     TRACKING_SERVER_HOST = os.getenv("TRACKING_SERVER_HOST", args.tracking_server)
-    mlflow.set_tracking_uri(f"http://{TRACKING_SERVER_HOST}:5000")
+    TRACKING_SERVER_HOST_PORT = os.getenv(
+        "TRACKING_SERVER_HOST_PORT", args.tracking_server_port
+    )
+    tracking_uri = f"http://{TRACKING_SERVER_HOST}:{TRACKING_SERVER_HOST_PORT}"
+    print(tracking_uri)
+    mlflow.set_tracking_uri(tracking_uri)
     os.environ["TORCH_HOME"] = "models\\resnet"  # setting the environment variable
     # path to downloaded dataset
     path = os.path.join(os.path.dirname(os.path.realpath(__file__)), args.data_path)
@@ -119,7 +130,8 @@ if __name__ == "__main__":
         )
         # SaveModelCallback loads best model at the end of training
         learn.fit_one_cycle(
-            100,
+            # 100,
+            1,
             slice(params["lr1"], params["lr2"]),
             cbs=[
                 EarlyStoppingCallback(patience=2),
