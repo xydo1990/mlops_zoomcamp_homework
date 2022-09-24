@@ -16,7 +16,7 @@ quality_checks:
 # training with local tracking server
 train:
 	docker-compose -f src/docker-compose-train.yml up -d
-	python src/train_model.py --tracking_server localhost
+	python src/train_model.py
 
 shutdown_local_env:
 	docker-compose -f src/docker-compose-train.yml down

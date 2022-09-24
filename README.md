@@ -36,6 +36,8 @@ Here is a sample of it's content including the labels.
         ```bash
         nano .env
         ```
+        1) enter AWS credentials
+        2) enter AWS bucket name
 
 3) Get data from kaggle
     * download with script
@@ -89,7 +91,7 @@ Here is a sample of it's content including the labels.
         docker stop prediction_service
         ```
     4) ```bash
-        python prediction_service/app.py
+        python prediction_service_stream/app.py
         ```
     5) (use localhost in following variables:
         MONGODB_ADDRESS="mongodb://localhost:27017"
@@ -97,7 +99,7 @@ Here is a sample of it's content including the labels.
         "EVIDENTLY_SERVICE", "http://localhost:8085")
     6) go to prediction_service folder and run
         ```bash
-        python prediction_service/streaming_send_data.py
+        python prediction_service_stream/streaming_send_data.py
         ```
     7) resulting in a terminal output like:
     ![images/streaming_output.png](images/streaming_output.png)

@@ -48,7 +48,7 @@ def data_preprocess_handler(path):
 
 
 def create_timm_body(arch: str, pretrained=True, cut=None, n_in=3):
-    "Creates a body from any model in the `timm` library."
+    """Creates a body from any model in the `timm` library."""
     model = timm.create_model(
         arch, pretrained=pretrained, num_classes=0, global_pool=""
     )
@@ -92,6 +92,12 @@ if __name__ == "__main__":
         help="path to minifigure data folder relative to this file",
         default="../data",
     )
+    parser.add_argument(
+        "--n_epochs",
+        type=int,
+        help="number of epochs to train model max",
+        default="100",
+    )
     args = parser.parse_args()
 
     seed_everything()
@@ -131,7 +137,7 @@ if __name__ == "__main__":
         # SaveModelCallback loads best model at the end of training
         learn.fit_one_cycle(
             # 100,
-            1,
+            args.n_epochs,
             slice(params["lr1"], params["lr2"]),
             cbs=[
                 EarlyStoppingCallback(patience=2),
