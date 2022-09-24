@@ -15,11 +15,11 @@ quality_checks:
 
 # training with local tracking server
 train:
-	docker-compose -f src/docker-compose-train.yml up -d
-	python src/train_model.py
+	docker-compose -f docker-compose-train.yml up -d
+	python src/train_model.py --n_epochs=1
 
 shutdown_local_env:
-	docker-compose -f src/docker-compose-train.yml down
+	docker-compose -f docker-compose-train.yml down
 
 build: quality_checks unittests
 	docker-compose build

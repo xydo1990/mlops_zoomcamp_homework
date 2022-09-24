@@ -151,26 +151,3 @@ if __name__ == "__main__":
         accuracy_best = accuracy_score(y.numpy(), y_hat)
         print(f"best accuracy {accuracy_best}")
         mlflow.log_metric("accuracy_best", accuracy_best)
-
-        # manually load best model (if not trained)
-        learn_best = vision_learner(
-            data,
-            "resnet50",
-            metrics=[error_rate, accuracy],
-            model_dir=Path(os.path.join(os.getcwd(), "models", "resnet")),
-            path=Path("" "."),
-        )
-
-        best_model_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "models",
-            "resnet",
-            "model_best",
-        )
-        print(best_model_path)
-        learn_best.load(best_model_path)
-        print(f"number classes {data.c}")
-        preds, y = learn_best.get_preds(dl=data.valid)
-        y_hat = np.array([np.argmax(sample) for sample in preds])
-        accuracy_best = accuracy_score(y.numpy(), y_hat)
-        print(f"best accuracy {accuracy_best}")

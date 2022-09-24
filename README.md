@@ -40,13 +40,15 @@ Here is a sample of it's content including the labels.
         2) enter AWS bucket name
 
 3) Get data from kaggle
-    * download with script
-        1) follow https://www.kaggle.com/general/74235 to create kaggle API key file ~/.kaggle/kaggle.json
-        2) use script
-            ```bash
-            python src/get_data.py
-            ```
-    * download manually at https://www.kaggle.com/datasets/ihelon/lego-minifigures-classification and copy to 'data' folder
+    1) download
+        * download with script
+            1) follow https://www.kaggle.com/general/74235 to create kaggle API key file ~/.kaggle/kaggle.json
+            2) use script
+                ```bash
+                python src/get_data.py
+                ```
+        * download manually at https://www.kaggle.com/datasets/ihelon/lego-minifigures-classification and copy to 'data' folder
+    2) convert .csv files as utf8 (e.g. via VSCode on bottom right, save as utf8)
 
 ## recommended
 1) faster model training: AWS instance with ca. 8 CPU cores (e.g. running Ubuntu)

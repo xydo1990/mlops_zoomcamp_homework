@@ -13,7 +13,7 @@ def get_data(data_path, download=False):
         kaggle.api.authenticate()
         kaggle.api.dataset_download_files(
             "ihelon/lego-minifigures-classification",
-            path=os.path.dirname(data_path),
+            path=data_path,
             unzip=True,
         )
     else:
