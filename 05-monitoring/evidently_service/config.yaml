@@ -1,17 +1,11 @@
 datasets:
-  taxi:
-    column_mapping:
-      categorical_features:
-        - 'PULocationID'
-        - 'DOLocationID'
-      numerical_features:
-        - 'trip_distance'
+  minifigure_dataset:
     data_format:
       header: true
       separator: ','
     monitors:
       - data_drift
-    reference_file: ./datasets/green_tripdata_2021-01.parquet
+    reference_file: ./datasets/tmp_test_predictions.parquet
 service:
   calculation_period_sec: 2
   min_reference_size: 30
@@ -19,3 +13,6 @@ service:
   datasets_path: datasets
   use_reference: true
   window_size: 5
+
+
+# TODO how to adapt to image data - no feature columns present

@@ -14,7 +14,8 @@ Here is a sample of it's content including the labels.
 
 
 # solution overview
-![solution_overview](./images/process_overview.png)
+
+![architecture](./images/architecture.drawio.png)
 
 # installation
 ## requirements
@@ -56,7 +57,7 @@ Here is a sample of it's content including the labels.
     * please set your config in the .env file
 
 # get started
-1) feeling for dataset: [src/test.ipynb](src/test.ipynb)
+1) feeling for dataset: [src/data_feeling.ipynb](src/data_feeling.ipynb)
     1) link jupyter notebook's kernel to this environment with
         ```bash
         python -m ipykernel install --user --name=mlops_zoomcamp_homework
@@ -68,7 +69,6 @@ Here is a sample of it's content including the labels.
             ```bash
             make train
             ```
-            TODO: cannot reach http://s3:9001 atm, but model stored to src/modeks\resnet folder
 
     * (preferred) remotely:
         1) follow steps in mlflow tracking server section
@@ -115,7 +115,15 @@ Here is a sample of it's content including the labels.
         ```bash
         prefect deployment create src/batch_prefect_deployment.py
         ```
-    5) in prefect UI: create Work Queue with deployment
+    5) create Work Queue with deployment
+        ```bash
+        prefect work-queue create training-queue
+        ```
+        copy UUID of queue
+    6) start agent to pick up queue
+        ```bash
+        prefect agent start <UUID_QUEUE>
+        ```
 
 
 
@@ -187,16 +195,20 @@ make integration_test
     * "AttributeError: module 'typing' has no attribute '_ClassVar'"
         -> ```bash
             pip uninstall dataclassses
-        ```
+           ```
     * alembic.util.exc.CommandError: Can't locate revision identified by
         -> ```bash
             sudo rm ~/.prefect/orion.db
-        ```
+           ```
 
 # TODOs
 1) monitoring more beautiful
+    * evidently: reference data
 2) CD (later)
     * terraform
     * CD stage for repo in GitHub
 3) streaming in docker container
-4) check s3 connection pool full warning for batch_docker.py
+4) prefect deployment runs are failing, why?
+5) prefect add: check if new model present is better then old one with performance test over tests data. If yes, mark as production.
+    * prefect flow only takes the newest one marked as production and deploys it
+6) monitoring: if accuracy drops below threshold, retrain model on new/more data
