@@ -125,7 +125,7 @@ def run_flow(
     logger.info("make predictions")
     # y_pred, y = make_predictions(learner, df_lego)
     y_pred = make_predictions(learner, df_lego)
-    y = None
+    y = None  # y = np.array(df_lego["class_id"]) # not working
     logger.info("calculate metrics")
     if y is not None:
         calculate_metrics(y_pred, y)
