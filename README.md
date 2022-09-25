@@ -105,6 +105,19 @@ Here is a sample of it's content including the labels.
         ```
     7) resulting in a terminal output like:
     ![images/streaming_output.png](images/streaming_output.png)
+5) prefect deployment of batch mode
+    1) follow setup steps at [mlops zoomcamp notes of orchestration](https://gist.github.com/Qfl3x/8dd69b8173f027b9468016c118f3b6a5#remote-prefect-orion-deployment)
+    2) start one run of flow on remote/local system:
+        ```bash
+        python src/batch_prefect_flow.py --data_path data/test.csv --output_file outputs/batch_prediction.parquet
+        ```
+    4) configure deployment with:
+        ```bash
+        prefect deployment create src/batch_prefect_deployment.py
+        ```
+    5) in prefect UI: create Work Queue with deployment
+
+
 
 # content of project
 * problem description
@@ -139,24 +152,6 @@ with:
 make integration_test
 ```
 
-# local prefect deployment
-1) start local prefect
-    ```bash
-    prefect orion start --host 0.0.0.0
-    ```
-2) set prefect config to connect to local prefect
-    ```bash
-    prefect config set PREFECT_ORION_UI_API_URL="https://localhost:4200/api"
-    ```
-3) run
-    ```bash
-    python src/batch_prefect_flow.py --data_path data/test.csv --output_file outputs/batch_prediction.parquet
-    ```
-4) ```bash
-    prefect deployment create src/batch_prefect_deployment.py
-    ```
-5) in prefect UI: create Work Queue with deployment
-
 
 # further installation option
 ## installation on AWS instance
@@ -181,29 +176,22 @@ make integration_test
         sudo install docker-compose
         ```
 
-## remote Prefect setup
-on remote aws
-1) ```bash
-    prefect config set PREFECT_ORION_UI_API_URL="https://<external_IP>:4200/api"
-    ```
-2) ```bash
-    prefect orion start --host 0.0.0.0
-    ```
-3) ```bash
-    prefect storage create
-    ```
-4) select S3 AWS
-
-
-on prefect UI
-1) create Work Queue with deployment
-
 
 # credits
 1) fastai model trainning: https://www.kaggle.com/code/arbazkhan971/lego-minifigures-classification-for-beginner
 2) dataset: https://www.kaggle.com/datasets/ihelon/lego-minifigures-classification
 3) MLOps Zoomcamp: https://github.com/DataTalksClub/mlops-zoomcamp
 
+# FAQ
+1) issue starting prefect:
+    * "AttributeError: module 'typing' has no attribute '_ClassVar'"
+        -> ```bash
+            pip uninstall dataclassses
+        ```
+    * alembic.util.exc.CommandError: Can't locate revision identified by
+        -> ```bash
+            sudo rm ~/.prefect/orion.db
+        ```
 
 # TODOs
 1) monitoring more beautiful

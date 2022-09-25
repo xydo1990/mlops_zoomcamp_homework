@@ -1,15 +1,23 @@
-from prefect.deployments import Deployment
-from prefect.infrastructure import Process
-from prefect.orion.schemas.schedules import CronSchedule
+from datetime import timedelta
 
-from src.batch_prefect_flow import run_flow
+from prefect.deployments import DeploymentSpec
+from prefect.flow_runners import SubprocessFlowRunner
+from prefect.orion.schemas.schedules import IntervalSchedule
 
 # create prefect deployment of run_flow with CronSchedule
-deployment = Deployment.build_from_flow(
-    flow=run_flow,
-    name="model_deployment_cron",
-    schedule=CronSchedule(cron="0 9 15 * *", timezone="Europe/Berlin"),
-    infrastructure=Process(),
-    work_queue_name="prod",
+DeploymentSpec(
+    flow_location="batch_prefect_flow.py",
+    name="model_training",
+    schedule=IntervalSchedule(interval=timedelta(minutes=5)),
+    flow_runner=SubprocessFlowRunner(),
+    tags=["ml"],
 )
-deployment.apply()
+
+# deployment = Deployment.build_from_flow(
+#    flow=run_flow,
+#    name="model_deployment_cron",
+#    schedule=CronSchedule(cron="0 9 15 * *", timezone="Europe/Berlin"),
+#    infrastructure=Process(),
+#    work_queue_name="prod",
+# )
+# deployment.apply()

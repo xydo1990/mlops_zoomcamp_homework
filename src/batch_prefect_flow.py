@@ -6,6 +6,7 @@ import os
 
 import numpy as np
 import pandas as pd
+from dotenv import load_dotenv
 from fastai.vision.all import *
 from prefect import flow, get_run_logger, task
 from prefect.task_runners import SequentialTaskRunner
@@ -95,7 +96,8 @@ def make_predictions(learn, df):
     # preds, _, decoded = learn.get_preds(dl=test_dl, with_decoded=True)
     y_probs = learn.predict(df)
     y_pred = np.array([np.argmax(i) for sample in np.array(y_probs) for i in sample])
-    return np.array(y_pred), np.array(df["class_id"])
+    # return y_pred, np.array(df["class_id"])
+    return y_pred
 
 
 @task
@@ -121,7 +123,9 @@ def run_flow(
     logger.info("get model")
     learner = get_learner(model_run, tracking_server_ip, tracking_server_port)
     logger.info("make predictions")
-    y_pred, y = make_predictions(learner, df_lego)
+    # y_pred, y = make_predictions(learner, df_lego)
+    y_pred = make_predictions(learner, df_lego)
+    y = None
     logger.info("calculate metrics")
     if y is not None:
         calculate_metrics(y_pred, y)
@@ -130,6 +134,8 @@ def run_flow(
 
 
 if __name__ == "__main__":
+    load_dotenv()
+
     # optional input arguments
     parser = argparse.ArgumentParser(
         description="prediction of values for production test,"
@@ -145,7 +151,7 @@ if __name__ == "__main__":
         "--model_run",
         type=str,
         help="run of model from mlflow model registry ",
-        default="runs:/9633b33d48274dc3af5be5ee0d7771e2/model",
+        default="runs:/e1c3003940e14f3f872dea8521bb1cd6/model",
     )
     parser.add_argument(
         "--output_file",
@@ -168,16 +174,17 @@ if __name__ == "__main__":
     parser.add_argument(
         "--mlflow_bucket",
         type=str,
-        help="mlflow tracking server host",
-        default="localhost",
+        help="AWS S3 bucket name",
+        default="YOUR_S3_BUCKET_NAME",
     )
     args = parser.parse_args()
 
-    # HOTFIX TODO remove
     args.tracking_server_ip = os.getenv("TRACKING_SERVER_HOST", args.tracking_server_ip)
-    # args.output_file = (
-    #    "s3://" + os.getenv("MLFLOW_BUCKET_NAME", args.mlflow_bucket) + "/batch_prediction.parquet"
-    # )
+    args.tracking_server_port = os.getenv(
+        "TRACKING_SERVER_HOST_PORT", args.tracking_server_port
+    )
+    args.model_run = os.getenv("MLFLOW_RUN", args.model_run)
+    args.mlflow_bucket = os.getenv("MLFLOW_BUCKET_NAME", args.mlflow_bucket)
 
     run_flow(
         args.data_path,
